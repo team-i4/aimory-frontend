@@ -1,0 +1,12 @@
+flutter_native_splash:
+  color: "#FFE88E" # 배경색 (HEX 코드, 연한 노란색)
+  image: assets/img/aimory_calendar_logo.png # 스플래쉬 이미지 경로
+  android: true # Android 적용
+  ios: true     # iOS 적용
+
+  # 이미지 배치 설정
+  android_gravity: center     # Android에서 로고 중앙 정렬
+  ios_content_mode: scaleAspectFit # iOS에서 로고 비율 유지하며 맞춤
+
+  # 추가 설정
+  web: false # 웹에서는 스플래쉬 화면 비활성화
