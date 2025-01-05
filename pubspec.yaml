@@ -42,6 +42,7 @@ dependencies:
   shared_preferences: ^2.0.15 # 로컬 저장소
   dio: ^5.7.0           # 고급 HTTP 통신
   json_serializable: ^6.7.1 # JSON 처리
+  flutter_native_splash: ^2.4.4
 
 dev_dependencies:
   flutter_test:
@@ -69,16 +70,17 @@ flutter:
 
   assets:
     - assets/img/
+    - assets/img/aimory_calendar_logo.png
 
   fonts:
     - family: pretendard
       fonts:
-        - asset: assets/fonts/pretendard_regular.ttf
-        - asset: assets/fonts/pretendard_bold.ttf
+        - asset: assets/fonts/Pretendard-Regular.ttf
+        - asset: assets/fonts/Pretendard-Bold.ttf
           weight: 700
-        - asset: assets/fonts/pretendard_light.ttf
+        - asset: assets/fonts/Pretendard-Light.ttf
           weight: 300
-        - asset: assets/fonts/pretendard_semibold.ttf
+        - asset: assets/fonts/Pretendard-Semibold.ttf
           weight: 600
 
   # To add assets to your application, add an assets section, like this:
