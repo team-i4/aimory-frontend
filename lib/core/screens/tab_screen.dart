@@ -1,8 +1,13 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
+import '../../features/auth/screens/parent_info_update_screen.dart';
+import '../../features/home/screens/parent_home_screen.dart';
 import '../../features/home/screens/teacher_home_screen.dart';
+import '../../features/notes/screens/parent_note_list_screen.dart';
+import '../../features/notices/screens/parent_notice_list_screen.dart';
 import '../../features/notices/screens/teacher_notice_list_screen.dart';
 import '../../features/notes/screens/teacher_note_list_screen.dart';
+import '../../features/photos/screens/parent_photo_list_screen.dart';
 import '../../features/photos/screens/teacher_photo_list_screen.dart';
 import '../../features/auth/screens/teacher_info_update_screen.dart';
 
@@ -16,22 +21,22 @@ class TabScreen extends StatefulWidget {
 class _TabScreenState extends State<TabScreen> {
   int _selectedTabIndex = 0;
 
-  // Teacher Body 위젯 리스트
-  final List<Widget> _tabBodies = [
-    const TeacherHomeScreen(), // Home Screen
-    const TeacherNoticeListScreen(), // Notice Screen
-    const TeacherNoteListScreen(), // Note Screen
-    const TeacherPhotoListScreen(), // Photo Screen
-    const TeacherInfoUpdateScreen(), // Info Screen
-  ];
-  // // Parent Body 위젯 리스트
+  // // Teacher Body 위젯 리스트
   // final List<Widget> _tabBodies = [
-  //   const ParentHomeScreen(), // Home Screen
-  //   const ParentNoticeListScreen(), // Notice Screen
-  //   const ParentNoteListScreen(), // Note Screen
-  //   const ParentPhotoListScreen(), // Photo Screen
-  //   const ParentInfoUpdateScreen(), // Info Screen
+  //   const TeacherHomeScreen(), // Home Screen
+  //   const TeacherNoticeListScreen(), // Notice Screen
+  //   const TeacherNoteListScreen(), // Note Screen
+  //   const TeacherPhotoListScreen(), // Photo Screen
+  //   const TeacherInfoUpdateScreen(), // Info Screen
   // ];
+  // Parent Body 위젯 리스트
+  final List<Widget> _tabBodies = [
+    const ParentHomeScreen(), // Home Screen
+    const ParentNoticeListScreen(), // Notice Screen
+    const ParentNoteListScreen(), // Note Screen
+    const ParentPhotoListScreen(), // Photo Screen
+    const ParentInfoUpdateScreen(), // Info Screen
+  ];
 
   // BottomNavigationBarItem label 리스트
   final List<String> _tabLabels = [
