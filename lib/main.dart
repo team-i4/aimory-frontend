@@ -7,6 +7,9 @@ import 'features/home/screens/parent_home_screen.dart';
 void main() {
   runApp(
     MaterialApp(
+      theme: ThemeData(
+        fontFamily: 'pretendard', // 기본 폰트 설정
+      ),
       home: TabScreen(),
     ),
   );
