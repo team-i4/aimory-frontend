@@ -11,3 +11,4 @@ const DARK_GREY_COLOR = Color(0xFF323232);  // 어두운 회색 (버튼)
 const MID_GREY_COLOR = Color(0xFF545454);   // 중간 회색
 const LIGHT_GREY_COLOR = Color(0xFF828282); // 밝은 회색
 const BORDER_GREY_COLOR = Color(0xFFD9D9D9);// 경계선 회색
+const F4_GREY_COLOR = Color(0xFFF4F4F4);    // F4F4F4 컹어
