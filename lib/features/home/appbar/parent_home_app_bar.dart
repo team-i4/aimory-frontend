@@ -170,7 +170,7 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                           CircleAvatar(
                             radius: 40,
-                            backgroundImage: AssetImage('assets/img/teacher01.jpg'), // 교사 이미지 경로
+                            backgroundImage: AssetImage('assets/img/girl_sample.jpg'), // 교사 이미지 경로
                           ),
                         ],
 
