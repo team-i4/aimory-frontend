@@ -1,6 +1,8 @@
+import 'package:aimory_app/features/auth/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/const/colors.dart';
+import '../../../core/widgets/custom_button.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -78,30 +80,21 @@ class SignInScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20), // 버튼 위 여백
                 // 로그인 버튼
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: DARK_GREY_COLOR,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text(
-                      '로그인',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                CustomButton(
+                  text: '로그인',
+                  onPressed: () {
+                    print('로그인 버튼 클릭');
+                  },
                 ),
                 const SizedBox(height: 30), // 하단 텍스트 여백
                 // 회원가입 링크
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                    );
+                  },
                   child: const Text(
                     '회원가입',
                     style: TextStyle(
