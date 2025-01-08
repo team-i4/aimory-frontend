@@ -69,7 +69,7 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "김하은 어린이의",
+                      "우리아이의",
                       style: TextStyle(
 
                         fontFamily: 'pretendard',
@@ -79,7 +79,8 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           "하루는 어땠을까요?",

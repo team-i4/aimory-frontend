@@ -25,7 +25,7 @@ class _TabScreenState extends State<TabScreen> {
   // final List<Widget> _tabBodies = [
   //   const TeacherHomeScreen(), // Home Screen
   //   const TeacherNoticeListScreen(), // Notice Screen
-  //   const TeacherNoteListScreen(), // Note Screen
+  //   TeacherNoteListScreen(), // Note Screen
   //   const TeacherPhotoListScreen(), // Photo Screen
   //   const TeacherInfoUpdateScreen(), // Info Screen
   // ];
@@ -33,7 +33,7 @@ class _TabScreenState extends State<TabScreen> {
   final List<Widget> _tabBodies = [
     const ParentHomeScreen(), // Home Screen
     const ParentNoticeListScreen(), // Notice Screen
-    const ParentNoteListScreen(), // Note Screen
+    ParentNoteListScreen(), // Note Screen
     const ParentPhotoListScreen(), // Photo Screen
     const ParentInfoUpdateScreen(), // Info Screen
   ];
