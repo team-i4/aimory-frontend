@@ -43,6 +43,7 @@ dependencies:
   dio: ^5.7.0           # 고급 HTTP 통신
   json_serializable: ^6.7.1 # JSON 처리
   flutter_native_splash: ^2.4.4
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:

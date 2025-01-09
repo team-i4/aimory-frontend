@@ -1,5 +1,6 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // 날짜 포맷을 위해 추가
 
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
@@ -13,6 +14,7 @@ class NoteInsertScreen extends StatefulWidget {
 
 class _NoteInsertScreenState extends State<NoteInsertScreen> {
   final TextEditingController _dateController = TextEditingController();
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void dispose() {
@@ -20,20 +22,60 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
     super.dispose();
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
+  void _openCustomDatePicker(BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      builder: (BuildContext context) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: MID_GREY_COLOR, // 선택된 날짜 색상
+              onPrimary: Colors.white, // 선택된 날짜의 텍스트 색상
+              onSurface: BLACK_COLOR, // 기본 텍스트 색상
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.purple, // "취소", "확인" 버튼 색상
+              ),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: const Text(
+                  "날짜 선택",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 360, // 달력 높이 조절
+                child: CalendarDatePicker(
+                  initialDate: _selectedDate,
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                  onDateChanged: (DateTime newDate) {
+                    setState(() {
+                      _selectedDate = newDate;
+                      _dateController.text =
+                          DateFormat('yyyy-MM-dd').format(newDate); // 날짜 포맷 변경
+                    });
+                    Navigator.pop(context); // 날짜 선택 후 모달 닫기
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
-
-    if (pickedDate != null) {
-      setState(() {
-        _dateController.text = "${pickedDate.toLocal()}".split(' ')[0];
-      });
-    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +124,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                     decoration: CustomInputDecoration.basic(
                       hintText: '날짜',
                     ),
-                    onTap: () => _selectDate(context),
+                    onTap: () => _openCustomDatePicker(context),
                   ),
                 ),
               ],
