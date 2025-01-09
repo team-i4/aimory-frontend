@@ -22,21 +22,21 @@ class _TabScreenState extends State<TabScreen> {
   int _selectedTabIndex = 0;
 
   // Teacher Body 위젯 리스트
-  final List<Widget> _tabBodies = [
-    const TeacherHomeScreen(), // Home Screen
-    const TeacherNoticeListScreen(), // Notice Screen
-    TeacherNoteListScreen(), // Note Screen
-    const TeacherPhotoListScreen(), // Photo Screen
-    const TeacherInfoUpdateScreen(), // Info Screen
-  ];
-  // // Parent Body 위젯 리스트
   // final List<Widget> _tabBodies = [
-  //   const ParentHomeScreen(), // Home Screen
-  //   const ParentNoticeListScreen(), // Notice Screen
-  //   ParentNoteListScreen(), // Note Screen
-  //   const ParentPhotoListScreen(), // Photo Screen
-  //   const ParentInfoUpdateScreen(), // Info Screen
+  //   const TeacherHomeScreen(), // Home Screen
+  //   const TeacherNoticeListScreen(), // Notice Screen
+  //   TeacherNoteListScreen(), // Note Screen
+  //   const TeacherPhotoListScreen(), // Photo Screen
+  //   const TeacherInfoUpdateScreen(), // Info Screen
   // ];
+  // Parent Body 위젯 리스트
+  final List<Widget> _tabBodies = [
+    const ParentHomeScreen(), // Home Screen
+    const ParentNoticeListScreen(), // Notice Screen
+    ParentNoteListScreen(), // Note Screen
+    const ParentPhotoListScreen(), // Photo Screen
+    const ParentInfoUpdateScreen(), // Info Screen
+  ];
 
   // BottomNavigationBarItem label 리스트
   final List<String> _tabLabels = [

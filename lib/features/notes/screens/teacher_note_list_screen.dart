@@ -1,17 +1,16 @@
 import 'package:aimory_app/features/notes/screens/note_insert_screen.dart';
 import 'package:aimory_app/features/notes/screens/teacher_note_detail_screen.dart';
 import 'package:flutter/material.dart';
-
 import '../../../core/const/colors.dart';
 import '../../../core/widgets/swipe_to_delete.dart';
 import '../models/note_model.dart';
 
 class TeacherNoteListScreen extends StatefulWidget {
   @override
-  _TeacherNoteListScreen createState() => _TeacherNoteListScreen();
+  _TeacherNoteListScreenState createState() => _TeacherNoteListScreenState();
 }
 
-class _TeacherNoteListScreen extends State<TeacherNoteListScreen> {
+class _TeacherNoteListScreenState extends State<TeacherNoteListScreen> {
   // Note 데이터 리스트 생성
   List<Note> items = List.generate(
     13,
