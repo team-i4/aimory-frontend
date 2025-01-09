@@ -1,17 +1,28 @@
 import 'package:aimory_app/features/notes/screens/note_insert_screen.dart';
+import 'package:aimory_app/features/notes/screens/teacher_note_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/const/colors.dart';
 import '../../../core/widgets/swipe_to_delete.dart';
+import '../models/note_model.dart';
 
 class TeacherNoteListScreen extends StatefulWidget {
   @override
-
   _TeacherNoteListScreen createState() => _TeacherNoteListScreen();
 }
 
 class _TeacherNoteListScreen extends State<TeacherNoteListScreen> {
-  List<String> items = List.generate(13, (index) => '이채아');
+  // Note 데이터 리스트 생성
+  List<Note> items = List.generate(
+    13,
+        (index) => Note(
+      name: '이채아 $index', // 이름
+      date: '2025.01.0${index + 1}', // 날짜
+      description:
+      '오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈어요. 블록을 쌓고 무너뜨리며 상상력을 발휘했고, 동생과 함께 장난감 기차를 가지고 놀면서 사이좋게 웃음소리도 가득했답니다.',
+      imageUrl: 'assets/img/girl_sample.jpg', // 이미지 URL
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +36,7 @@ class _TeacherNoteListScreen extends State<TeacherNoteListScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '16개',
+                  '${items.length}개', // 알림장 개수
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
                 ),
                 Align(
@@ -65,10 +76,22 @@ class _TeacherNoteListScreen extends State<TeacherNoteListScreen> {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 return SwipeToDelete(
-                  onDelete: () {
-                    setState(() {
-                      items.removeAt(index);
-                    });
+                    onDelete: () {
+                  setState(() {
+                    // 삭제 기능 구현
+                    items.removeAt(index); // 리스트에서 아이템 삭제
+                  });
+                },
+                child: GestureDetector(
+                // 리스트 아이템 클릭 시 NoteDetailScreen으로 이동
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                            TeacherNoteDetailScreen(note: items[index]), // 데이터 전달
+                      ),
+                    );
                   },
                   child : Container(
                     margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
@@ -81,19 +104,14 @@ class _TeacherNoteListScreen extends State<TeacherNoteListScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 80,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              'assets/img/girl_sample.jpg',
-                              fit: BoxFit.cover,
-                            ),
+                      children: [// 이미지
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            items[index].imageUrl, // 이미지 URL
+                            height: 80,
+                            width: 80,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         SizedBox(width: 15.0,),
@@ -102,15 +120,15 @@ class _TeacherNoteListScreen extends State<TeacherNoteListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "이채아",
+                                items[index].name,
                                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                "2025.01.05",
+                                items[index].date,
                                 style: TextStyle(fontSize: 12, color: LIGHT_GREY_COLOR),
                               ),
                               Text(
-                                "오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈어요. 블록을 쌓고 무너뜨리며 상상력을 발휘했고, 동생과 함께 장난감 기차를 가지고 놀면서 사이좋게 웃음소리도 가득했답니다.",
+                                items[index].description,
                                 style: TextStyle(fontSize: 14),
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
@@ -122,6 +140,7 @@ class _TeacherNoteListScreen extends State<TeacherNoteListScreen> {
                       ],
                     ),
                   ),
+                ),
                 );
               },
             ),
@@ -130,7 +149,4 @@ class _TeacherNoteListScreen extends State<TeacherNoteListScreen> {
       ),
     );
   }
-}
-
-class zzzzz {
 }
