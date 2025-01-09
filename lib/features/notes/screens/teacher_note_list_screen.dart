@@ -1,3 +1,4 @@
+import 'package:aimory_app/features/notes/screens/note_insert_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/const/colors.dart';
@@ -30,19 +31,27 @@ class _TeacherNoteListScreen extends State<TeacherNoteListScreen> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton.icon(
-                    onPressed: () {}, // 알림장 추가 버튼 기능
-                    icon: const Icon(Icons.add, size: 14, color: DARK_GREY_COLOR),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const NoteInsertScreen()),
+                      );
+                    }, // 알림장 추가 버튼 기능
                     label: const Text(
                       "알림장 작성하기",
                       style: TextStyle(
                           color: DARK_GREY_COLOR,
-                          fontSize: 12
+                          fontSize: 14
                       ),
                     ),
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(
+                          color: MID_GREY_COLOR, // 테두리 색상
+                          width: 1, // 테두리 두께
+                        )
                       ),
                     ),
                   ),
@@ -121,4 +130,7 @@ class _TeacherNoteListScreen extends State<TeacherNoteListScreen> {
       ),
     );
   }
+}
+
+class zzzzz {
 }
