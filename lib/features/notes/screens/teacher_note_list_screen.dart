@@ -83,14 +83,21 @@ class _TeacherNoteListScreenState extends State<TeacherNoteListScreen> {
                 },
                 child: GestureDetector(
                 // 리스트 아이템 클릭 시 NoteDetailScreen으로 이동
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    // 삭제 상태 확인 후 리스트에서 삭제
+                    bool? isDeleted = await Navigator.push(
                       context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                            TeacherNoteDetailScreen(note: items[index]), // 데이터 전달
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            TeacherNoteDetailScreen(note: items[index]),
                       ),
                     );
+
+                    if (isDeleted == true) {
+                      setState(() {
+                        items.removeAt(index); // 삭제된 항목 리스트에서 제거
+                      });
+                    }
                   },
                   child : Container(
                     margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
