@@ -14,11 +14,11 @@ class _ParentNoticeListScreenState extends State<ParentNoticeListScreen> {
   List<Notice> items = List.generate(
     13,
         (index) => Notice(
-      name: '이채아 $index', // 이름
+      name: '원장 $index', // 이름
       date: '2025.01.0${index + 1}', // 날짜
       description:
       '오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈어요. 블록을 쌓고 무너뜨리며 상상력을 발휘했고, 동생과 함께 장난감 기차를 가지고 놀면서 사이좋게 웃음소리도 가득했답니다.',
-      imageUrl: 'assets/img/girl_sample.jpg', // 이미지 URL
+      imageUrl: 'assets/img/notice_img_sample.jpg', // 이미지 URL
     ),
   );
 
