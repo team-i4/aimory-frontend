@@ -1,10 +1,9 @@
-import 'package:aimory_app/features/notes/screens/note_insert_screen.dart';
-import 'package:aimory_app/features/notes/screens/teacher_note_detail_screen.dart';
 import 'package:aimory_app/features/notices/screens/teacher_notice_detail_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../core/const/colors.dart';
 import '../../../core/widgets/swipe_to_delete.dart';
 import '../models/notice_model.dart';
+import 'notice_insert_screen.dart';
 
 class TeacherNoticeListScreen extends StatefulWidget {
   @override
@@ -16,11 +15,11 @@ class _TeacherNoticeListScreenState extends State<TeacherNoticeListScreen> {
   List<Notice> items = List.generate(
     13,
         (index) => Notice(
-      name: '이채아 $index', // 이름
+      name: '원장 $index', // 이름
       date: '2025.01.0${index + 1}', // 날짜
       description:
       '오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈어요. 블록을 쌓고 무너뜨리며 상상력을 발휘했고, 동생과 함께 장난감 기차를 가지고 놀면서 사이좋게 웃음소리도 가득했답니다.',
-      imageUrl: 'assets/img/girl_sample.jpg', // 이미지 URL
+      imageUrl: 'assets/img/notice_img_sample.jpg', // 이미지 URL
     ),
   );
 
@@ -45,7 +44,7 @@ class _TeacherNoticeListScreenState extends State<TeacherNoticeListScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const NoteInsertScreen()),
+                        MaterialPageRoute(builder: (context) => const NoticeInsertScreen()),
                       );
                     }, // 공지사항 추가 버튼 기능
                     label: const Text(
