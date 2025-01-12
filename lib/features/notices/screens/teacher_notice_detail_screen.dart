@@ -1,6 +1,7 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
 import '../models/notice_model.dart';
+import 'notice_insert_screen.dart';
 
 class TeacherNoticeDetailScreen extends StatelessWidget {
 
@@ -48,10 +49,10 @@ class TeacherNoticeDetailScreen extends StatelessWidget {
                       child: TextButton.icon(
                         onPressed: () {
                           // 공지사항 작성하는 스크린 넘어가도록 작업예정
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(builder: (context) => const NoteInsertScreen()),
-                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const NoticeInsertScreen()),
+                          );
                         }, // 알림장 수정 기능
                         label: const Text(
                           "수정하기",
