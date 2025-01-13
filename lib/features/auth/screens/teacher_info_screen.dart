@@ -105,7 +105,6 @@ class TeacherInfoScreen extends StatelessWidget {
                       height: 50.0,
                       color: MID_GREY_COLOR,
                     ),
-
                     GestureDetector(
                       onTap: () {},
                       child: Column(
