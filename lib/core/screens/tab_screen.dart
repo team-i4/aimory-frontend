@@ -1,6 +1,6 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
-import '../../features/auth/screens/parent_info_update_screen.dart';
+import '../../features/auth/screens/parent_info_screen.dart';
 import '../../features/home/screens/parent_home_screen.dart';
 import '../../features/home/screens/teacher_home_screen.dart';
 import '../../features/notes/screens/parent_note_list_screen.dart';
@@ -9,7 +9,7 @@ import '../../features/notices/screens/teacher_notice_list_screen.dart';
 import '../../features/notes/screens/teacher_note_list_screen.dart';
 import '../../features/photos/screens/parent_photo_list_screen.dart';
 import '../../features/photos/screens/teacher_photo_list_screen.dart';
-import '../../features/auth/screens/teacher_info_update_screen.dart';
+import '../../features/auth/screens/teacher_info_screen.dart';
 
 class TabScreen extends StatefulWidget {
   const TabScreen({Key? key}) : super(key: key);
@@ -27,7 +27,7 @@ class _TabScreenState extends State<TabScreen> {
     TeacherNoticeListScreen(), // Notice Screen
     TeacherNoteListScreen(), // Note Screen
     const TeacherPhotoListScreen(), // Photo Screen
-    const TeacherInfoUpdateScreen(), // Info Screen
+    TeacherInfoScreen(), // Info Screen
   ];
   // // Parent Body 위젯 리스트
   // final List<Widget> _tabBodies = [
@@ -35,7 +35,7 @@ class _TabScreenState extends State<TabScreen> {
   //   ParentNoticeListScreen(), // Notice Screen
   //   ParentNoteListScreen(), // Note Screen
   //   const ParentPhotoListScreen(), // Photo Screen
-  //   const ParentInfoUpdateScreen(), // Info Screen
+  //   ParentInfoScreen(), // Info Screen
   // ];
 
   // BottomNavigationBarItem label 리스트
