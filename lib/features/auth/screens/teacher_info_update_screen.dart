@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
-class TeacherInfoScreen extends StatelessWidget {
-  const TeacherInfoScreen({Key? key}) : super(key: key);
+class TeacherInfoUpdateScreen extends StatelessWidget {
+  const TeacherInfoUpdateScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
