@@ -75,11 +75,11 @@ class _TeacherNoteListScreenState extends State<TeacherNoteListScreen> {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 return SwipeToDelete(
-                    onDelete: () {
-                  setState(() {
-                    // 삭제 기능 구현
-                    items.removeAt(index); // 리스트에서 아이템 삭제
-                  });
+                  onDelete: () {
+                    setState(() {
+                      // 삭제 기능 구현
+                      items.removeAt(index); // 리스트에서 아이템 삭제
+                    });
                 },
                 child: GestureDetector(
                 // 리스트 아이템 클릭 시 NoteDetailScreen으로 이동

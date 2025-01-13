@@ -45,8 +45,13 @@ class _SwipeToDeleteState extends State<SwipeToDelete> {
               ),
               // color: MID_GREY_COLOR,
               child: IconButton(
-                icon: Icon(Icons.delete, color: MAIN_YELLOW, size: 30,),
-                onPressed: widget.onDelete,
+                icon: Icon(Icons.delete, color: MAIN_YELLOW, size: 30),
+                onPressed: () {
+                  widget.onDelete(); // 삭제 콜백 호출
+                  setState(() {
+                    _dragExtent = 0; // 스와이프 위치 초기화
+                  });
+                },
               ),
             ),
           ),
