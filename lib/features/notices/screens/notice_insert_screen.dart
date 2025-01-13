@@ -25,6 +25,7 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
   void _openCustomDatePicker(BuildContext context) {
     showModalBottomSheet(
       backgroundColor: Colors.white,
+      isScrollControlled: true, // 화면 크기에 따라 모달 높이 조정 가능
       context: context,
       builder: (BuildContext context) {
         return Theme(
@@ -40,37 +41,40 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
               ),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: const Text(
-                  "날짜 선택",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+          child: SingleChildScrollView( // 스크롤 가능하도록
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: const Text(
+                    "날짜 선택",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 360, // 달력 높이 조절
-                child: CalendarDatePicker(
-                  initialDate: _selectedDate,
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
-                  onDateChanged: (DateTime newDate) {
-                    setState(() {
-                      _selectedDate = newDate;
-                      _dateController.text =
-                          DateFormat('yyyy-MM-dd').format(newDate); // 날짜 포맷 변경
-                    });
-                    Navigator.pop(context); // 날짜 선택 후 모달 닫기
-                  },
+                SizedBox(
+                  height: 360, // 달력 높이 조절
+                  child: CalendarDatePicker(
+                    initialDate: _selectedDate,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                    onDateChanged: (DateTime newDate) {
+                      setState(() {
+                        _selectedDate = newDate;
+                        _dateController.text =
+                            DateFormat('yyyy-MM-dd').format(newDate); // 날짜 포맷 변경
+                      });
+                      Navigator.pop(context); // 날짜 선택 후 모달 닫기
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+
         );
       },
     );
