@@ -46,7 +46,12 @@ class ParentInfoScreen extends StatelessWidget {
                   children: [
 
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const InfoInsertScreen()),
+                        );
+                      },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
