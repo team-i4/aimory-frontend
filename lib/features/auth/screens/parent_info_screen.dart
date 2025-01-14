@@ -1,6 +1,7 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
 
+import 'child_info_insert_screen.dart';
 import 'info_insert_screen.dart';
 
 class ParentInfoScreen extends StatelessWidget {
@@ -84,7 +85,12 @@ class ParentInfoScreen extends StatelessWidget {
                     ),
 
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ChildInfoInsertScreen()),
+                        );
+                      },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
