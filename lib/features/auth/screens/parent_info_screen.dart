@@ -1,6 +1,8 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
 
+import 'info_insert_screen.dart';
+
 class ParentInfoScreen extends StatelessWidget {
   const ParentInfoScreen({Key? key}) : super(key: key);
 
