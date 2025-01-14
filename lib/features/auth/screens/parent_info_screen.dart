@@ -1,6 +1,7 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
 
+import 'child_info_insert_screen.dart';
 import 'info_insert_screen.dart';
 
 class ParentInfoScreen extends StatelessWidget {
@@ -84,7 +85,12 @@ class ParentInfoScreen extends StatelessWidget {
                     ),
 
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ChildInfoInsertScreen()),
+                        );
+                      },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -95,7 +101,7 @@ class ParentInfoScreen extends StatelessWidget {
                           SizedBox(
                             width: 80.0, // 버튼의 고정 너비 설정
                             child: Text(
-                              '아이 정보 수정', // 예시 텍스트
+                              '아이 정보 등', // 예시 텍스트
                               textAlign: TextAlign.center, // 텍스트 가운데 정렬
                               style: TextStyle(fontSize: 12, color: BLACK_COLOR,),
                               maxLines: 2, // 최대 줄 수 설정

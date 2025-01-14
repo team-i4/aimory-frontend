@@ -5,14 +5,14 @@ import 'package:intl/intl.dart'; // 날짜 포맷을 위해 추가
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
 
-class CenterInfoInsertScreen extends StatefulWidget {
-  const CenterInfoInsertScreen({Key? key}) : super(key: key);
+class ChildInfoInsertScreen extends StatefulWidget {
+  const ChildInfoInsertScreen({Key? key}) : super(key: key);
 
   @override
-  State<CenterInfoInsertScreen> createState() => _CenterInfoInsertScreenState();
+  State<ChildInfoInsertScreen> createState() => _ChildInfoInsertScreenState();
 }
 
-class _CenterInfoInsertScreenState extends State<CenterInfoInsertScreen> {
+class _ChildInfoInsertScreenState extends State<ChildInfoInsertScreen> {
   final TextEditingController _dateController = TextEditingController();
 
   @override
@@ -28,7 +28,7 @@ class _CenterInfoInsertScreenState extends State<CenterInfoInsertScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: const Text(
-          '소속 정보 등록',
+          '아이 정보 등록',
           style: TextStyle(
             fontWeight: FontWeight.w600,
           ),
@@ -57,6 +57,27 @@ class _CenterInfoInsertScreenState extends State<CenterInfoInsertScreen> {
                     backgroundColor: Colors.grey,
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text('이름'),
+            const SizedBox(height: 8),
+
+            TextFormField(
+              readOnly: true, // 수정 불가능하도록 설정
+              initialValue:  null, // TODO: 유저 이름 데이터 표시
+              decoration: CustomInputDecoration.basic(
+                hintText: '이름을 입력하세요.',
+              ),
+            ),
+            // TODO : 달력 위젯 연동
+            const SizedBox(height: 16),
+            const Text('생년월일'),
+            const SizedBox(height: 8),
+            TextFormField(
+              obscureText: true,
+              decoration: CustomInputDecoration.basic(
+                hintText: '생년월일을 입력하세요.',
               ),
             ),
 
