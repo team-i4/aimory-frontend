@@ -1,4 +1,5 @@
 import 'package:aimory_app/core/const/colors.dart';
+import 'package:aimory_app/features/photos/screens/photo_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 class TeacherPhotoListScreen extends StatelessWidget {
@@ -6,16 +7,24 @@ class TeacherPhotoListScreen extends StatelessWidget {
   final String childName; // 원아 이름
   final int photoCount; // 원아 사진 개수
   final List<String> photos; // 사진 URL 리스트
+  final List<Map<String, dynamic>> allPhotos;
 
   const TeacherPhotoListScreen({
     Key? key,
     required this.childName,
     required this.photoCount,
     required this.photos,
+    required this.allPhotos,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // 특정 원아의 사진만 필터링
+    final filteredPhotos = allPhotos
+        .where((photo) => photo['childName'] == childName)
+        .map((photo) => photo['photoUrl'] as String)
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -67,16 +76,33 @@ class TeacherPhotoListScreen extends StatelessWidget {
                 ),
                 itemCount: photos.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: LIGHT_GREY_COLOR, // 기본 배경색
-                      image: photos[index].isNotEmpty
-                          ? DecorationImage(
-                        image: AssetImage(photos[index]), // 로컬 이미지 표시
-                        fit: BoxFit.cover,
-                      )
-                          : null, // 사진이 없는 경우 빈 박스
-                      borderRadius: BorderRadius.circular(8.0),
+                  final photoUrl = photos[index];
+                  return GestureDetector(
+                    onTap: () {
+                      // PhotoDetailScreen으로 이동
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PhotoDetailScreen(
+                            imageUrl: photoUrl,
+                            title: childName,
+                            date: '2024.05.26. 오후 3:00', // 예제 날짜
+                            role: 'teacher', // 역할 전달 (teacher/parent)
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: LIGHT_GREY_COLOR, // 기본 배경색
+                        image: photoUrl.isNotEmpty
+                            ? DecorationImage(
+                          image: NetworkImage(photoUrl), // 로컬 이미지 표시
+                          fit: BoxFit.cover,
+                        )
+                            : null, // 사진이 없는 경우 빈 박스
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                     ),
                   );
                 },

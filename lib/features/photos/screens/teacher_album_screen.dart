@@ -133,6 +133,7 @@ class _TeacherAlbumScreenState extends State<TeacherAlbumScreen> {
                                 album.count,
                                     (idx) => 'https://imgnews.pstatic.net/image/366/2025/01/15/0001047437_002_20250115110121752.jpg',
                               ),
+                              allPhotos: []
                             ),
                           ),
                         );
