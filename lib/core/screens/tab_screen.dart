@@ -1,8 +1,13 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
+import '../../features/auth/screens/parent_info_screen.dart';
+import '../../features/home/screens/parent_home_screen.dart';
 import '../../features/home/screens/teacher_home_screen.dart';
+import '../../features/notes/screens/parent_note_list_screen.dart';
+import '../../features/notices/screens/parent_notice_list_screen.dart';
 import '../../features/notices/screens/teacher_notice_list_screen.dart';
 import '../../features/notes/screens/teacher_note_list_screen.dart';
+import '../../features/photos/screens/parent_photo_list_screen.dart';
 import '../../features/photos/screens/teacher_album_screen.dart';
 import '../../features/auth/screens/teacher_info_screen.dart';
 
@@ -16,22 +21,9 @@ class TabScreen extends StatefulWidget {
 class _TabScreenState extends State<TabScreen> {
   int _selectedTabIndex = 0;
 
-  // Teacher Body 위젯 리스트에서
-  final List<Widget> _tabBodies = [
-    const TeacherHomeScreen(), // Home Screen
-    TeacherNoticeListScreen(), // Notice Screen
-    TeacherNoteListScreen(), // Note Screen
-    TeacherAlbumScreen(), // Photo Screen
-    TeacherInfoScreen(), // Info Screen
-  ];
-  // // Parent Body 위젯 리스트
-  // final List<Widget> _tabBodies = [
-  //   const ParentHomeScreen(), // Home Screen
-  //   ParentNoticeListScreen(), // Notice Screen
-  //   ParentNoteListScreen(), // Note Screen
-  //   ParentPhotoListScreen(), // Photo Screen
-  //   ParentInfoScreen(), // Info Screen
-  // ];
+  // 부모 사용자와 연관된 원아 정보를 저장(임시)
+  final int parentChildId = 123;
+
 
   // BottomNavigationBarItem label 리스트
   final List<String> _tabLabels = [
@@ -67,7 +59,19 @@ class _TabScreenState extends State<TabScreen> {
       ),
       body: IndexedStack(
         index: _selectedTabIndex,
-        children: _tabBodies,
+        children: [
+          // const TeacherHomeScreen(), // Home Screen
+          // TeacherNoticeListScreen(), // Notice Screen
+          // TeacherNoteListScreen(), // Note Screen
+          // TeacherAlbumScreen(), // Photo Screen
+          // TeacherInfoScreen(), // Info Screen
+
+          const ParentHomeScreen(),
+          ParentNoticeListScreen(),
+          ParentNoteListScreen(),
+          ParentPhotoListScreen(childId: parentChildId), // 데이터를 직접 전달
+          ParentInfoScreen(),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
