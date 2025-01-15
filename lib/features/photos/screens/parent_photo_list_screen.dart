@@ -1,3 +1,4 @@
+import 'package:aimory_app/features/photos/screens/photo_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:aimory_app/core/const/colors.dart';
 
@@ -50,6 +51,12 @@ class _ParentPhotoListScreenState extends State<ParentPhotoListScreen> {
           }
 
           final data = snapshot.data!;
+          // 임시 사진 URL 리스트 생성
+          final List<String> photos = List.generate(
+            data.count,
+                (index) =>
+            'https://imgnews.pstatic.net/image/056/2025/01/15/0011875678_001_20250115182816671.jpg',
+          );
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -83,14 +90,32 @@ class _ParentPhotoListScreenState extends State<ParentPhotoListScreen> {
                     ),
                     itemCount: data.count,
                     itemBuilder: (context, index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: LIGHT_GREY_COLOR, // 기본 배경색
-                          image: DecorationImage(
-                            image: NetworkImage(data.profileImageUrl), // 네트워크 이미지 표시
-                            fit: BoxFit.cover,
+
+                      final photoUrl = photos[index];
+                      return GestureDetector(
+                        onTap: () {
+                          // PhotoDetailScreen으로 이동
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PhotoDetailScreen(
+                                imageUrl: photoUrl,
+                                title: data.name,
+                                date: '2024.05.26. 오후 3:00', // 예제 날짜
+                                role: 'parent', // 부모 역할
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: LIGHT_GREY_COLOR, // 기본 배경색
+                            image: DecorationImage(
+                              image: NetworkImage(photoUrl), // 네트워크 이미지 표시
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                          borderRadius: BorderRadius.circular(8.0),
                         ),
                       );
                     },
