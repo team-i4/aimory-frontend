@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // 날짜 포맷을 위해 추가
 
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
+import '../../../core/widgets/photo_picker.dart';
 
 class InfoInsertScreen extends StatefulWidget {
   const InfoInsertScreen({Key? key}) : super(key: key);
@@ -14,6 +17,7 @@ class InfoInsertScreen extends StatefulWidget {
 
 class _InfoInsertScreenState extends State<InfoInsertScreen> {
   final TextEditingController _dateController = TextEditingController();
+  File? _selectedImage;
 
   @override
   void dispose() {
@@ -45,19 +49,28 @@ class _InfoInsertScreenState extends State<InfoInsertScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            // TODO : 카메라/갤러리 연동하여 바꿀 수 있도록
-            SizedBox(
-              height: 120.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircleAvatar(
+            PhotoPicker(
+              onImagePicked: (image) {
+                setState(() {
+                  _selectedImage = image;
+                });
+              },
+              builder: (context, image) {
+                return Center(
+                  heightFactor: 1.5,
+                  child: CircleAvatar(
                     radius: 40,
                     backgroundColor: Colors.grey,
+                    backgroundImage: image != null ? FileImage(image) : null,
+                    child: image == null
+                        ? const Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                    )
+                        : null,
                   ),
-                ],
-              ),
+                );
+              },
             ),
 
             const SizedBox(height: 16),

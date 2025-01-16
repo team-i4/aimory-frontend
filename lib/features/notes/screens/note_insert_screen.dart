@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart'; // 날짜 포맷을 위해 추가
-
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
+import '../../../core/widgets/multi_image_picker.dart';
 
 class NoteInsertScreen extends StatefulWidget {
   const NoteInsertScreen({Key? key}) : super(key: key);
@@ -15,11 +18,18 @@ class NoteInsertScreen extends StatefulWidget {
 class _NoteInsertScreenState extends State<NoteInsertScreen> {
   final TextEditingController _dateController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
+  List<File> _selectedImages = [];
 
   @override
   void dispose() {
     _dateController.dispose();
     super.dispose();
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
   }
 
   void _openCustomDatePicker(BuildContext context) {
@@ -41,7 +51,6 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
               ),
             ),
           ),
-
           child: SingleChildScrollView( // 스크롤 가능하도록
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -73,16 +82,12 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                   ),
                 ),
               ],
+            ),
           ),
-
-
-          ),
-
         );
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +109,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
           },
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,24 +149,67 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text('file_name_01.jpg'),
-            const Text('file_name_02.jpg'),
+            if (_selectedImages.isNotEmpty)
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: _selectedImages.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  File image = entry.value;
+                  return Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.file(
+                          image,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () => _removeImage(index),
+                          child: const CircleAvatar(
+                            radius: 10,
+                            backgroundColor: MAIN_YELLOW,
+                            child: Icon(
+                              Icons.close,
+                              color: MAIN_DARK_GREY,
+                              size: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                      backgroundColor: MAIN_YELLOW,
-                      foregroundColor: BLACK_COLOR,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                  child: MultiImagePicker(
+                    onImagesPicked: (pickedFiles) {
+                      setState(() {
+                        _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
+                      });
+                    },
+                    builder: (context, pickImages) => ElevatedButton(
+                      onPressed: pickImages,
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        backgroundColor: MAIN_YELLOW,
+                        foregroundColor: BLACK_COLOR,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                       ),
+                      child: const Text('사진추가'),
                     ),
-                    child: const Text('사진추가'),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -182,7 +230,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                 ),
               ],
             ),
-            const Spacer(),
+            const SizedBox(height: 16),
             CustomButton(
               text: '사진 등록하기',
               onPressed: () {

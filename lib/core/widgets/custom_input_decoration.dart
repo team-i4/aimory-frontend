@@ -11,7 +11,7 @@ class CustomInputDecoration {
       filled: true, // 텍스트 필드에 배경색을 활성화
       fillColor: F4_GREY_COLOR, // 활성화된 배경색의 색상
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(0), // 테두리의 둥근 정도 설정
+        borderRadius: BorderRadius.circular(10.0), // 테두리의 둥근 정도 설정
         borderSide: BorderSide.none, // 테두리를 제거
       ),
     );
