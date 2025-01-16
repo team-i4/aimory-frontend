@@ -60,17 +60,17 @@ class _TabScreenState extends State<TabScreen> {
       body: IndexedStack(
         index: _selectedTabIndex,
         children: [
-          // const TeacherHomeScreen(), // Home Screen
-          // TeacherNoticeListScreen(), // Notice Screen
-          // TeacherNoteListScreen(), // Note Screen
-          // TeacherAlbumScreen(), // Photo Screen
-          // TeacherInfoScreen(), // Info Screen
+          const TeacherHomeScreen(), // Home Screen
+          TeacherNoticeListScreen(), // Notice Screen
+          TeacherNoteListScreen(), // Note Screen
+          TeacherAlbumScreen(), // Photo Screen
+          TeacherInfoScreen(), // Info Screen
 
-          const ParentHomeScreen(),
-          ParentNoticeListScreen(),
-          ParentNoteListScreen(),
-          ParentPhotoListScreen(childId: parentChildId), // 데이터를 직접 전달
-          ParentInfoScreen(),
+          // const ParentHomeScreen(),
+          // ParentNoticeListScreen(),
+          // ParentNoteListScreen(),
+          // ParentPhotoListScreen(childId: parentChildId), // 데이터를 직접 전달
+          // ParentInfoScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

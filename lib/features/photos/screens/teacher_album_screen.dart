@@ -1,6 +1,8 @@
 import 'package:aimory_app/features/photos/screens/teacher_photo_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../core/const/colors.dart';
+import '../../../core/widgets/multi_image_picker.dart';
 import '../models/album_model.dart';
 import '../services/album_service.dart';
 
@@ -13,6 +15,8 @@ class TeacherAlbumScreen extends StatefulWidget {
 
 class _TeacherAlbumScreenState extends State<TeacherAlbumScreen> {
   late Future<List<Album>> albums;
+  final List<XFile> _selectedPhotos = [];
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -46,48 +50,72 @@ class _TeacherAlbumScreenState extends State<TeacherAlbumScreen> {
     ];
   }
 
+  Future<void> _pickMultipleImages() async {
+    try {
+      final List<XFile>? pickedFiles = await _picker.pickMultiImage();
+      if (pickedFiles != null) {
+        setState(() {
+          _selectedPhotos.addAll(pickedFiles);
+        });
+        // 선택된 파일 로그 출력
+        for (var file in pickedFiles) {
+          print('선택된 파일: ${file.path}');
+        }
+      }
+    } catch (e) {
+      print('이미지 선택 중 오류 발생: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            color: F4_GREY_COLOR,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end, // 버튼을 오른쪽 정렬
-              children: [
-                TextButton.icon(
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => const PhotoInsertScreen()),
-                    // );
-                  }, // 사진 추가 버튼 기능
-                  label: const Text(
-                    "사진 추가하기",
-                    style: TextStyle(
-                      color: DARK_GREY_COLOR,
-                      fontSize: 14,
-                    ),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(
-                        color: MID_GREY_COLOR, // 테두리 색상
-                        width: 1, // 테두리 두께
+      body: SingleChildScrollView( // 전체 화면 스크롤 가능하도록 추가
+        child: Column(
+          children: [
+            Container(
+              color: F4_GREY_COLOR,
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end, // 버튼을 오른쪽 정렬
+                children: [
+                  MultiImagePicker(
+                    onImagesPicked: (pickedFiles) {
+                      setState(() {
+                        _selectedPhotos.addAll(pickedFiles);
+                      });
+                      print('선택된 파일 목록:');
+                      for (var file in pickedFiles) {
+                        print(file.path); // 파일 경로 출력
+                      }
+                      print('총 선택된 파일 개수: ${pickedFiles.length}'); // 파일 개수 출력
+                    },
+                    builder: (context, pickImages) => TextButton.icon(
+                      onPressed: pickImages, // 사진 추가 버튼 기능
+                      label: const Text(
+                        "사진 추가하기",
+                        style: TextStyle(
+                          color: DARK_GREY_COLOR,
+                          fontSize: 14,
+                        ),
                       ),
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                            color: MID_GREY_COLOR, // 테두리 색상
+                            width: 1, // 테두리 두께
+                          ),
+                        ),
+                      ),
+                      icon: Icon(Icons.add, color: DARK_GREY_COLOR), // 아이콘 추가
                     ),
                   ),
-                  icon: Icon(Icons.add, color: DARK_GREY_COLOR), // 아이콘 추가
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: FutureBuilder<List<Album>>(
+            FutureBuilder<List<Album>>(
               future: albums,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -110,6 +138,8 @@ class _TeacherAlbumScreenState extends State<TeacherAlbumScreen> {
                 ];
 
                 return GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(), // 내부 스크롤 비활성화
+                  shrinkWrap: true,
                   padding: const EdgeInsets.all(16.0),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2, // 한 줄에 두 개의 아이템
@@ -127,13 +157,13 @@ class _TeacherAlbumScreenState extends State<TeacherAlbumScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => TeacherPhotoListScreen(
-                              childName: album.name,
-                              photoCount: album.count,
-                              photos: List.generate(
-                                album.count,
-                                    (idx) => 'https://imgnews.pstatic.net/image/366/2025/01/15/0001047437_002_20250115110121752.jpg',
-                              ),
-                              allPhotos: []
+                                childName: album.name,
+                                photoCount: album.count,
+                                photos: List.generate(
+                                  album.count,
+                                      (idx) => 'https://imgnews.pstatic.net/image/366/2025/01/15/0001047437_002_20250115110121752.jpg',
+                                ),
+                                allPhotos: []
                             ),
                           ),
                         );
@@ -168,8 +198,8 @@ class _TeacherAlbumScreenState extends State<TeacherAlbumScreen> {
                 );
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

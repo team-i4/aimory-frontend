@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // 날짜 포맷을 위해 추가
-
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
+import '../../../core/widgets/photo_picker.dart';
 
 class CenterInfoInsertScreen extends StatefulWidget {
   const CenterInfoInsertScreen({Key? key}) : super(key: key);
@@ -14,6 +16,7 @@ class CenterInfoInsertScreen extends StatefulWidget {
 
 class _CenterInfoInsertScreenState extends State<CenterInfoInsertScreen> {
   final TextEditingController _dateController = TextEditingController();
+  File? _selectedImage;
 
   @override
   void dispose() {
@@ -45,19 +48,28 @@ class _CenterInfoInsertScreenState extends State<CenterInfoInsertScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            // TODO : 카메라/갤러리 연동하여 바꿀 수 있도록
-            SizedBox(
-              height: 120.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircleAvatar(
+            PhotoPicker(
+              onImagePicked: (image) {
+                setState(() {
+                  _selectedImage = image;
+                });
+              },
+              builder: (context, image) {
+                return Center(
+                  heightFactor: 1.5,
+                  child: CircleAvatar(
                     radius: 40,
                     backgroundColor: Colors.grey,
+                    backgroundImage: image != null ? FileImage(image) : null,
+                    child: image == null
+                        ? const Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                    )
+                        : null,
                   ),
-                ],
-              ),
+                );
+              },
             ),
 
             const SizedBox(height: 16),
@@ -66,7 +78,7 @@ class _CenterInfoInsertScreenState extends State<CenterInfoInsertScreen> {
 
             TextFormField(
               readOnly: true, // 수정 불가능하도록 설정
-              initialValue:  null, // TODO: 유저 이름 데이터 표시
+              initialValue: null, // TODO: 유저 이름 데이터 표시
               decoration: CustomInputDecoration.basic(
                 hintText: '소속을 입력하세요.',
               ),
