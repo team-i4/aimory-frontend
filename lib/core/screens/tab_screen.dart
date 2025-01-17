@@ -12,14 +12,16 @@ import '../../features/photos/screens/teacher_album_screen.dart';
 import '../../features/auth/screens/teacher_info_screen.dart';
 
 class TabScreen extends StatefulWidget {
+  static final GlobalKey<_TabScreenState> tabScreenKey = GlobalKey<_TabScreenState>(); // GlobalKey 추가
+
   const TabScreen({Key? key}) : super(key: key);
 
   @override
   State<TabScreen> createState() => _TabScreenState();
 }
 
-class _TabScreenState extends State<TabScreen> {
-  int _selectedTabIndex = 0;
+class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController; // TabController
 
   // 부모 사용자와 연관된 원아 정보를 저장(임시)
   final int parentChildId = 123;
@@ -34,50 +36,69 @@ class _TabScreenState extends State<TabScreen> {
     "내정보",
   ];
 
-  void _onTabSelected(int index) {
-    setState(() {
-      _selectedTabIndex = index;
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _tabLabels.length, vsync: this); // TabController 초기화
+    // TabController 상태 변화 시 업데이트
+    _tabController.addListener(() {
+      setState(() {}); // 상태를 강제로 업데이트
     });
+  }
+
+  void changeTab(int index) {
+    if (index < 0 || index >= _tabController.length) return;
+    _tabController.animateTo(index); // 탭 이동
+  }
+
+
+  @override
+  void dispose() {
+    _tabController.dispose(); // TabController 해제
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Home 탭만 AppBar 없이 렌더링
-      appBar: _selectedTabIndex == 0
-          ? null
-          : AppBar(
-        centerTitle: true,
-        title: Text(
-          _tabLabels[_selectedTabIndex],
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600,
+      appBar: _tabController.index == 0
+        ? null
+        : AppBar(
+          centerTitle: true,
+          title: Text(
+            _tabLabels[_tabController.index],
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
-        backgroundColor: MAIN_YELLOW,
+          backgroundColor: MAIN_YELLOW,
       ),
-      body: IndexedStack(
-        index: _selectedTabIndex,
+      body: TabBarView(
+        controller: _tabController, // TabController 연결
         children: [
-          const TeacherHomeScreen(), // Home Screen
+          TeacherHomeScreen(), // Home Screen
           TeacherNoticeListScreen(), // Notice Screen
           TeacherNoteListScreen(), // Note Screen
           TeacherAlbumScreen(), // Photo Screen
           TeacherInfoScreen(), // Info Screen
 
-          // const ParentHomeScreen(),
+          // ParentHomeScreen(),
           // ParentNoticeListScreen(),
           // ParentNoteListScreen(),
           // ParentPhotoListScreen(childId: parentChildId), // 데이터를 직접 전달
           // ParentInfoScreen(),
         ],
       ),
+
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        currentIndex: _selectedTabIndex,
-        onTap: _onTabSelected,
+        currentIndex: _tabController.index, // 현재 TabController의 index와 동기화
+        onTap: (index) {
+          _tabController.index = index; // 탭 전환
+        },
         type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
         selectedItemColor: BLACK_COLOR,
         unselectedItemColor: LIGHT_GREY_COLOR,
         items: const [
