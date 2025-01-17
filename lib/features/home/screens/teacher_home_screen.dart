@@ -32,7 +32,7 @@ class TeacherHomeScreen extends StatelessWidget {
                           children: [
                             // 전체 알림장
                             Text(
-                              "전체 알림장",
+                              "공지사항",
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                             ),
                             Row(
