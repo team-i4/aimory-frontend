@@ -45,17 +45,17 @@ class _TabScreenState extends State<TabScreen> {
     return Scaffold(
       // Home 탭만 AppBar 없이 렌더링
       appBar: _selectedTabIndex == 0
-          ? null
-          : AppBar(
-        centerTitle: true,
-        title: Text(
-          _tabLabels[_selectedTabIndex],
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600,
+        ? null
+        : AppBar(
+          centerTitle: true,
+          title: Text(
+            _tabLabels[_selectedTabIndex],
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
-        backgroundColor: MAIN_YELLOW,
+          backgroundColor: MAIN_YELLOW,
       ),
       body: IndexedStack(
         index: _selectedTabIndex,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/const/colors.dart';
+import '../../auth/screens/center_info_update_screen.dart';
 
 class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TeacherHomeAppBar({Key? key}) : super(key: key);
@@ -88,7 +89,12 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: TextButton.icon(
-                        onPressed: () {}, // 자세히 보기 버튼 기능
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CenterInfoUpdateScreen()),
+                          );
+                        }, // 자세히 보기 버튼 기능
                         icon: const Icon(Icons.add, size: 14, color: DARK_GREY_COLOR),
                         label: const Text(
                           "자세히 보기",
