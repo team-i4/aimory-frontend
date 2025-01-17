@@ -1,5 +1,8 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
+import '../../../core/screens/tab_screen.dart';
+import '../../notices/screens/teacher_notice_list_screen.dart';
+import '../../photos/screens/teacher_album_screen.dart';
 import '../appbar/teacher_home_app_bar.dart';
 
 class TeacherHomeScreen extends StatelessWidget {
@@ -35,23 +38,27 @@ class TeacherHomeScreen extends StatelessWidget {
                               "공지사항",
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "더보기",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300,
+                            TextButton(
+                              onPressed: () {
+                                TabScreen.tabScreenKey.currentState?.changeTab(1); // "공지사항" 탭으로 이동
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "더보기",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      color: MAIN_DARK_GREY,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 20,
                                     color: MAIN_DARK_GREY,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  size: 20,
-                                  color: MAIN_DARK_GREY,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -121,23 +128,27 @@ class TeacherHomeScreen extends StatelessWidget {
                               "우리반 앨범",
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "더보기",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300,
+                            TextButton(
+                              onPressed: () {
+                                TabScreen.tabScreenKey.currentState?.changeTab(3); // "사진첩" 탭으로 이동
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "더보기",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      color: MAIN_DARK_GREY,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 20,
                                     color: MAIN_DARK_GREY,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  size: 20,
-                                  color: MAIN_DARK_GREY,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
