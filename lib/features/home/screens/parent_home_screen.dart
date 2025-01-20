@@ -22,6 +22,12 @@ class ParentHomeScreen extends StatelessWidget {
       ),
     );
 
+    // 우리아이 앨범 샘플 데이터를 정의
+    final List<String> allPhotos = List.generate(
+      9,
+          (index) => 'https://static.rocketpunch.com/images/jibmusil/index/pc-section5-mood1-min.jpg',
+    );
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -295,13 +301,20 @@ class ParentHomeScreen extends StatelessWidget {
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8.0,
+                            mainAxisSpacing: 8.0,
                           ),
-                          itemCount: 9, // 샘플 이미지 개수
+                          itemCount: allPhotos.length, // 샘플 이미지 개수
                           itemBuilder: (context, index) {
-                            return Container(
-                              color: BORDER_GREY_COLOR, // 샘플 이미지
+                            final photoUrl = allPhotos[index];
+                            return Container(decoration: BoxDecoration(
+                              color: LIGHT_GREY_COLOR,
+                              image: DecorationImage(
+                                image: NetworkImage(photoUrl),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                             );
                           },
                         ),
