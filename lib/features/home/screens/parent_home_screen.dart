@@ -1,6 +1,8 @@
 import 'package:aimory_app/core/const/colors.dart';
+import 'package:aimory_app/features/notes/screens/parent_note_detail_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../core/screens/tab_screen.dart';
+import '../../notes/models/note_model.dart';
 import '../../notices/models/notice_model.dart';
 import '../../notices/screens/parent_notice_detail_screen.dart';
 import '../appbar/parent_home_app_bar.dart';
@@ -11,6 +13,7 @@ class ParentHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final List<Notice> noticeItems = List.generate(
       3, // 3개의 샘플 데이터만 표시
           (index) => Notice(
@@ -19,6 +22,17 @@ class ParentHomeScreen extends StatelessWidget {
         description:
         '오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈어요.',
         imageUrl: 'assets/img/notice_img_sample.jpg',
+      ),
+    );
+
+    final List<Note> noteItems = List.generate(
+      10, // 3개의 샘플 데이터만 표시
+          (index) => Note(
+        name: '이채아',
+        date: '2025.01.0${index + 1}',
+        description:
+        '오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈어요.',
+        imageUrl: 'assets/img/girl_sample.jpg',
       ),
     );
 
@@ -187,68 +201,81 @@ class ParentHomeScreen extends StatelessWidget {
                           height: 200, // 높이 제한
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: 5,
+                            itemCount: noteItems.length,
                             itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 16.0),
-                                child: Card(
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: BORDER_GREY_COLOR, width: 1),
+                              final note = noteItems[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ParentNoteDetailScreen(note: note),
                                     ),
-                                    width: 200, // 카드 너비
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
+                                  );
+                                },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 16.0),
+                                    child: Card(
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(color: BORDER_GREY_COLOR, width: 1),
+                                        ),
+                                        width: 200, // 카드 너비
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            CircleAvatar(
-                                              radius: 24,
-                                              backgroundImage: AssetImage('assets/img/girl_sample.jpg'), // 샘플 이미지
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                            Row(
                                               children: [
-                                                Text(
-                                                  "이채아",
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
+                                                CircleAvatar(
+                                                  radius: 24,
+                                                  backgroundImage: AssetImage(note.imageUrl), // 샘플 이미지
                                                 ),
-                                                Text(
-                                                  "해바라기 반",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: MAIN_DARK_GREY,
-                                                  ),
+                                                const SizedBox(width: 12),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      note.name,
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      note.date,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: MAIN_DARK_GREY,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
+                                            const SizedBox(height: 16),
+                                            Divider(), // 구분선
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              note.description,
+                                              style: TextStyle(fontSize: 14),
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ],
                                         ),
-                                        const SizedBox(height: 16),
-                                        Divider(), // 구분선
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          "오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈습니다.",
-                                          style: TextStyle(fontSize: 14),
-                                          maxLines: 3,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
                               );
+
                             },
                           ),
                         ),

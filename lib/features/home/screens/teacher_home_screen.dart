@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../core/screens/tab_screen.dart';
 import '../../notices/models/notice_model.dart';
 import '../../notices/screens/teacher_notice_detail_screen.dart';
-import '../../notices/screens/teacher_notice_list_screen.dart';
-import '../../photos/screens/teacher_album_screen.dart';
 import '../appbar/teacher_home_app_bar.dart';
 
 class TeacherHomeScreen extends StatelessWidget {
