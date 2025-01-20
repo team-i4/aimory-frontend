@@ -1,5 +1,10 @@
 import 'package:aimory_app/core/const/colors.dart';
+import 'package:aimory_app/features/notes/screens/parent_note_detail_screen.dart';
 import 'package:flutter/material.dart';
+import '../../../core/screens/tab_screen.dart';
+import '../../notes/models/note_model.dart';
+import '../../notices/models/notice_model.dart';
+import '../../notices/screens/parent_notice_detail_screen.dart';
 import '../appbar/parent_home_app_bar.dart';
 import '../appbar/teacher_home_app_bar.dart';
 
@@ -8,6 +13,35 @@ class ParentHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final List<Notice> noticeItems = List.generate(
+      3, // 3개의 샘플 데이터만 표시
+          (index) => Notice(
+        name: '원장 $index',
+        date: '2025.01.0${index + 1}',
+        description:
+        '오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈어요.',
+        imageUrl: 'assets/img/notice_img_sample.jpg',
+      ),
+    );
+
+    final List<Note> noteItems = List.generate(
+      10, // 3개의 샘플 데이터만 표시
+          (index) => Note(
+        name: '이채아',
+        date: '2025.01.0${index + 1}',
+        description:
+        '오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈어요.',
+        imageUrl: 'assets/img/girl_sample.jpg',
+      ),
+    );
+
+    // 우리아이 앨범 샘플 데이터를 정의
+    final List<String> allPhotos = List.generate(
+      9,
+          (index) => 'https://static.rocketpunch.com/images/jibmusil/index/pc-section5-mood1-min.jpg',
+    );
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -29,28 +63,32 @@ class ParentHomeScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // 전체 알림장
+                            // 공지사항
                             Text(
-                              "전체 알림장",
+                              "공지사항",
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "더보기",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300,
+                            TextButton(
+                              onPressed: () {
+                                TabScreen.tabScreenKey.currentState?.changeTab(1); // "공지사항" 탭으로 이동
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "더보기",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      color: MAIN_DARK_GREY,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 20,
                                     color: MAIN_DARK_GREY,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  size: 20,
-                                  color: MAIN_DARK_GREY,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -67,26 +105,38 @@ class ParentHomeScreen extends StatelessWidget {
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: 3, // 샘플 데이터 개수
+                            itemCount: noticeItems.length, // 데이터 개수
                             itemBuilder: (context, index) {
-                              return Container(
-                                margin: const EdgeInsets.all(0), // 카드 외부 여백
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Colors.white, // 배경색
-                                ),
-                                child: Column(
-                                  children: [
-                                    ListTile(
-                                      title: Text("공지사항 제목 $index"),
-                                      subtitle: Text("2024.05.26"),
+                              final notice = noticeItems[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ParentNoticeDetailScreen(notice: notice),
                                     ),
-                                    Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 10.0),
-                                      height: 1,
-                                      color: BORDER_GREY_COLOR,
-                                    ),
-                                  ],
+                                  );
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.all(0), // 카드 외부 여백
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    color: Colors.white, // 배경색
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      ListTile(
+                                        title: Text(notice.name),
+                                        subtitle: Text(notice.date),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.symmetric(horizontal: 10.0),
+                                        height: 1,
+                                        color: BORDER_GREY_COLOR,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -120,22 +170,27 @@ class ParentHomeScreen extends StatelessWidget {
                               "우리아이 알림장",
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                             ),
-                            Row(
-                              children: [
-                                Text(
-                                  "더보기",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300,
+                            TextButton(
+                              onPressed: () {
+                                TabScreen.tabScreenKey.currentState?.changeTab(2); // "알림장" 탭으로 이동
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "더보기",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      color: MAIN_DARK_GREY,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 20,
                                     color: MAIN_DARK_GREY,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  size: 20,
-                                  color: MAIN_DARK_GREY,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -146,68 +201,81 @@ class ParentHomeScreen extends StatelessWidget {
                           height: 200, // 높이 제한
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: 5,
+                            itemCount: noteItems.length,
                             itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 16.0),
-                                child: Card(
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: BORDER_GREY_COLOR, width: 1),
+                              final note = noteItems[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ParentNoteDetailScreen(note: note),
                                     ),
-                                    width: 200, // 카드 너비
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
+                                  );
+                                },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 16.0),
+                                    child: Card(
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(color: BORDER_GREY_COLOR, width: 1),
+                                        ),
+                                        width: 200, // 카드 너비
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            CircleAvatar(
-                                              radius: 24,
-                                              backgroundImage: AssetImage('assets/img/girl_sample.jpg'), // 샘플 이미지
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                            Row(
                                               children: [
-                                                Text(
-                                                  "이채아",
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
+                                                CircleAvatar(
+                                                  radius: 24,
+                                                  backgroundImage: AssetImage(note.imageUrl), // 샘플 이미지
                                                 ),
-                                                Text(
-                                                  "해바라기 반",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: MAIN_DARK_GREY,
-                                                  ),
+                                                const SizedBox(width: 12),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      note.name,
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      note.date,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: MAIN_DARK_GREY,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
+                                            const SizedBox(height: 16),
+                                            Divider(), // 구분선
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              note.description,
+                                              style: TextStyle(fontSize: 14),
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ],
                                         ),
-                                        const SizedBox(height: 16),
-                                        Divider(), // 구분선
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          "오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈습니다.",
-                                          style: TextStyle(fontSize: 14),
-                                          maxLines: 3,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
                               );
+
                             },
                           ),
                         ),
@@ -230,23 +298,27 @@ class ParentHomeScreen extends StatelessWidget {
                               "우리아이 앨범",
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "더보기",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300,
+                            TextButton(
+                              onPressed: () {
+                                TabScreen.tabScreenKey.currentState?.changeTab(3); // "사진첩" 탭으로 이동
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "더보기",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      color: MAIN_DARK_GREY,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 20,
                                     color: MAIN_DARK_GREY,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  size: 20,
-                                  color: MAIN_DARK_GREY,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -256,13 +328,20 @@ class ParentHomeScreen extends StatelessWidget {
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8.0,
+                            mainAxisSpacing: 8.0,
                           ),
-                          itemCount: 9, // 샘플 이미지 개수
+                          itemCount: allPhotos.length, // 샘플 이미지 개수
                           itemBuilder: (context, index) {
-                            return Container(
-                              color: BORDER_GREY_COLOR, // 샘플 이미지
+                            final photoUrl = allPhotos[index];
+                            return Container(decoration: BoxDecoration(
+                              color: LIGHT_GREY_COLOR,
+                              image: DecorationImage(
+                                image: NetworkImage(photoUrl),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                             );
                           },
                         ),
