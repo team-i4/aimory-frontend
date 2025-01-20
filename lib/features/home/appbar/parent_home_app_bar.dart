@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/const/colors.dart';
+import '../../auth/screens/child_info_update_screen.dart';
 
 class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ParentHomeAppBar({Key? key}) : super(key: key);
@@ -150,7 +151,12 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextButton.icon(
-                                  onPressed: () {}, // 자세히 보기 버튼 기능
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ChildInfoUpdateScreen()),
+                                    );
+                                  }, // 자세히 보기 버튼 기능
                                   icon: const Icon(Icons.add, size: 14, color: Colors.white),
                                   label: const Text(
                                     "자세히 보기",
