@@ -1,5 +1,6 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
+import '../../../core/screens/tab_screen.dart';
 import '../appbar/parent_home_app_bar.dart';
 import '../appbar/teacher_home_app_bar.dart';
 
@@ -31,26 +32,30 @@ class ParentHomeScreen extends StatelessWidget {
                           children: [
                             // 전체 알림장
                             Text(
-                              "전체 알림장",
+                              "공지사항",
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "더보기",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300,
+                            TextButton(
+                              onPressed: () {
+                                TabScreen.tabScreenKey.currentState?.changeTab(1); // "공지사항" 탭으로 이동
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "더보기",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      color: MAIN_DARK_GREY,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 20,
                                     color: MAIN_DARK_GREY,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  size: 20,
-                                  color: MAIN_DARK_GREY,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -120,22 +125,27 @@ class ParentHomeScreen extends StatelessWidget {
                               "우리아이 알림장",
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                             ),
-                            Row(
-                              children: [
-                                Text(
-                                  "더보기",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300,
+                            TextButton(
+                              onPressed: () {
+                                TabScreen.tabScreenKey.currentState?.changeTab(2); // "알림장" 탭으로 이동
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "더보기",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      color: MAIN_DARK_GREY,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 20,
                                     color: MAIN_DARK_GREY,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  size: 20,
-                                  color: MAIN_DARK_GREY,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -230,23 +240,27 @@ class ParentHomeScreen extends StatelessWidget {
                               "우리아이 앨범",
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "더보기",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300,
+                            TextButton(
+                              onPressed: () {
+                                TabScreen.tabScreenKey.currentState?.changeTab(3); // "사진첩" 탭으로 이동
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "더보기",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      color: MAIN_DARK_GREY,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 20,
                                     color: MAIN_DARK_GREY,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  size: 20,
-                                  color: MAIN_DARK_GREY,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
