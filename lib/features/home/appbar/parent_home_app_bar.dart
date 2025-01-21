@@ -1,3 +1,4 @@
+import 'package:aimory_app/features/search/screen/parent_search_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../core/const/colors.dart';
 import '../../auth/screens/child_info_update_screen.dart';
@@ -33,7 +34,12 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () {}, // 알림 버튼 기능
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ParentSearchScreen()),
+                        );
+                      }, // 알림 버튼 기능
                       icon: const Icon(
                         Icons.search_outlined,
                         size: 30,
