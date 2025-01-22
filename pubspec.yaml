@@ -59,6 +59,13 @@ dev_dependencies:
 
   build_runner: ^2.3.3  # 코드 생성 도구
 
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true # 안드로이드 아이콘 변경
+  ios: true
+  image_path: "assets/img/aimory_calendar_logo.png"
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
