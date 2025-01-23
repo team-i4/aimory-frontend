@@ -26,72 +26,90 @@ class SignUpScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('역할'),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              items: [
-                DropdownMenuItem(
-                  value: 'user',
-                  child: Text('사용자'),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('어린이집'),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  items: [
+                    DropdownMenuItem(
+                      value: 'centerName',
+                      child: Text('햇님어린이집'),
+                    ),
+                  ],
+                  onChanged: (value) {},
+                  decoration: CustomInputDecoration.basic(
+                    hintText: '어린이집을 선택하세요.',
+                  ),
                 ),
-                DropdownMenuItem(
-                  value: 'admin',
-                  child: Text('관리자'),
+                const SizedBox(height: 16),
+                const Text('역할'),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  items: [
+                    DropdownMenuItem(
+                      value: 'user',
+                      child: Text('사용자'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'admin',
+                      child: Text('관리자'),
+                    ),
+                  ],
+                  onChanged: (value) {},
+                  decoration: CustomInputDecoration.basic(
+                    hintText: '역할을 선택하세요.',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('이름'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  decoration: CustomInputDecoration.basic(
+                    hintText: '이름을 입력하세요.',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('비밀번호'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  obscureText: true,
+                  decoration: CustomInputDecoration.basic(
+                    hintText: '비밀번호',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('비밀번호 확인'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  obscureText: true,
+                  decoration: CustomInputDecoration.basic(
+                    hintText: '비밀번호 확인',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('이메일'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  decoration: CustomInputDecoration.basic(
+                    hintText: '이메일을 입력하세요.',
+                  ),
+                ),
+                const SizedBox(height: 24),
+                CustomButton(
+                  text: '회원가입',
+                  onPressed: () {
+                    print('회원가입 버튼 클릭');
+                  },
                 ),
               ],
-              onChanged: (value) {},
-
-              decoration: CustomInputDecoration.basic(
-                  hintText: '역할을 선택하세요.',
-              ),
             ),
-            const SizedBox(height: 16),
-            const Text('이름'),
-            const SizedBox(height: 8),
-            TextFormField(
-              decoration: CustomInputDecoration.basic(
-                hintText: '이름을 입력하세요.',
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text('비밀번호'),
-            const SizedBox(height: 8),
-            TextFormField(
-              obscureText: true,
-              decoration: CustomInputDecoration.basic(
-                hintText: '비밀번호',
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text('비밀번호 확인'),
-            const SizedBox(height: 8),
-            TextFormField(
-              obscureText: true,
-              decoration: CustomInputDecoration.basic(
-                hintText: '비밀번호 확인',
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text('이메일'),
-            const SizedBox(height: 8),
-            TextFormField(
-              decoration: CustomInputDecoration.basic(
-                hintText: '이메일을 입력하세요.',
-              ),
-            ),
-            const SizedBox(height: 24),
-            CustomButton(
-              text: '회원가입',
-              onPressed: () {
-                print('회원가입 버튼 클릭');
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );

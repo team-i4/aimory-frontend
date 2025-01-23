@@ -11,7 +11,8 @@ void main() {
         fontFamily: 'pretendard', // 기본 폰트 설정
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: TabScreen(key: TabScreen.tabScreenKey),
+      // home: TabScreen(key: TabScreen.tabScreenKey),
+      home: SignInScreen(),
     ),
   );
 }
