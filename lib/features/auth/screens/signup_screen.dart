@@ -44,7 +44,7 @@ class SignUpScreen extends StatelessWidget {
                   ],
                   onChanged: (value) {},
                   decoration: CustomInputDecoration.basic(
-                    hintText: '어린이집을 선택하세요.',
+                    hintText: '햇님어린이집',
                   ),
                 ),
                 const SizedBox(height: 16),
