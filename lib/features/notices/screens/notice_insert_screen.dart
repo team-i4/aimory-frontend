@@ -117,18 +117,18 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
           children: [
             Row(
               children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    decoration: CustomInputDecoration.basic(
-                      hintText: '담당자',
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: 'option1', child: Text('원장')),
-                    ],
-                    onChanged: (value) {},
-                  ),
-                ),
-                const SizedBox(width: 16),
+                // Expanded(
+                //   child: DropdownButtonFormField<String>(
+                //     decoration: CustomInputDecoration.basic(
+                //       hintText: '담당자',
+                //     ),
+                //     items: const [
+                //       DropdownMenuItem(value: 'option1', child: Text('원장')),
+                //     ],
+                //     onChanged: (value) {},
+                //   ),
+                // ),
+                // const SizedBox(width: 16),
                 Expanded(
                   child: TextFormField(
                     controller: _dateController,
@@ -210,22 +210,6 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
                       ),
                       child: const Text('사진추가'),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                      backgroundColor: BLACK_COLOR,
-                      foregroundColor: MAIN_YELLOW,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text('AI 그림 생성'),
                   ),
                 ),
               ],
