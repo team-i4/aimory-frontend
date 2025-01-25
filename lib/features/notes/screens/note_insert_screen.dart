@@ -19,11 +19,20 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
   final TextEditingController _dateController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   List<File> _selectedImages = [];
+  File? _previewImage;
+  bool _showPreviewImage = false; // 이미지 표시 여부
 
   @override
   void dispose() {
     _dateController.dispose();
     super.dispose();
+  }
+
+  void _removePreviewImage() {
+    setState(() {
+      _previewImage = null;
+      _showPreviewImage = false;
+    });
   }
 
   void _removeImage(int index) {
@@ -119,7 +128,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     decoration: CustomInputDecoration.basic(
-                      hintText: '반분류',
+                      hintText: '원아명',
                     ),
                     items: const [
                       DropdownMenuItem(value: 'option1', child: Text('Option 1')),
@@ -187,6 +196,71 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                   );
                 }).toList(),
               ),
+
+            if (_showPreviewImage && _previewImage == null)
+              Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 200,
+                    color: Colors.grey.shade300,
+                    child: Image.asset(
+                      'assets/img/notice_img_sample.jpg',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: _removePreviewImage,
+                      child: const CircleAvatar(
+                        radius: 14,
+                        backgroundColor: MAIN_YELLOW,
+                        child: Icon(
+                          Icons.close,
+                          color: MAIN_DARK_GREY,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+            if (_showPreviewImage && _previewImage != null)
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 200,
+                      color: Colors.grey.shade300, // 이미지 없을 시 색상 채우기
+                      child: Image.file(
+                        _previewImage!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: _removePreviewImage,
+                      child: const CircleAvatar(
+                        radius: 14,
+                        backgroundColor: MAIN_YELLOW,
+                        child: Icon(
+                          Icons.close,
+                          color: MAIN_DARK_GREY,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -215,7 +289,13 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        // 기본 이미지 생성 로직 추가
+                        _showPreviewImage = true;
+                        _previewImage = null;
+                      });
+                    },
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 12.0),

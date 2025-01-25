@@ -78,17 +78,17 @@ class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMix
       body: TabBarView(
         controller: _tabController, // TabController 연결
         children: [
-          // TeacherHomeScreen(), // Home Screen
-          // TeacherNoticeListScreen(), // Notice Screen
-          // TeacherNoteListScreen(), // Note Screen
-          // TeacherAlbumScreen(), // Photo Screen
-          // TeacherInfoScreen(), // Info Screen
+          TeacherHomeScreen(), // Home Screen
+          TeacherNoticeListScreen(), // Notice Screen
+          TeacherNoteListScreen(), // Note Screen
+          TeacherAlbumScreen(), // Photo Screen
+          TeacherInfoScreen(), // Info Screen
 
-          ParentHomeScreen(),
-          ParentNoticeListScreen(),
-          ParentNoteListScreen(),
-          ParentPhotoListScreen(childId: parentChildId), // 데이터를 직접 전달
-          ParentInfoScreen(),
+          // ParentHomeScreen(),
+          // ParentNoticeListScreen(),
+          // ParentNoteListScreen(),
+          // ParentPhotoListScreen(childId: parentChildId), // 데이터를 직접 전달
+          // ParentInfoScreen(),
         ],
       ),
 
