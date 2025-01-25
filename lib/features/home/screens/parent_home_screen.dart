@@ -17,7 +17,7 @@ class ParentHomeScreen extends StatelessWidget {
     final List<Notice> noticeItems = List.generate(
       3, // 3개의 샘플 데이터만 표시
           (index) => Notice(
-        name: '원장 $index',
+        title: '제목입니다. $index',
         date: '2025.01.0${index + 1}',
         description:
         '오늘 우리 채아는 오전 간식을 아주 잘 먹고 나서 활기차게 놀이를 즐기며 시간을 보냈어요.',
@@ -127,7 +127,7 @@ class ParentHomeScreen extends StatelessWidget {
                                   child: Column(
                                     children: [
                                       ListTile(
-                                        title: Text(notice.name),
+                                        title: Text(notice.title),
                                         subtitle: Text(notice.date),
                                       ),
                                       Container(

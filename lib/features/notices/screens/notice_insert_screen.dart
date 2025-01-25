@@ -97,7 +97,7 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
         backgroundColor: MAIN_YELLOW,
         centerTitle: true,
         title: const Text(
-          '알림장',
+          '공지사항',
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.w600,
@@ -115,31 +115,21 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                // Expanded(
-                //   child: DropdownButtonFormField<String>(
-                //     decoration: CustomInputDecoration.basic(
-                //       hintText: '담당자',
-                //     ),
-                //     items: const [
-                //       DropdownMenuItem(value: 'option1', child: Text('원장')),
-                //     ],
-                //     onChanged: (value) {},
-                //   ),
-                // ),
-                // const SizedBox(width: 16),
-                Expanded(
-                  child: TextFormField(
-                    controller: _dateController,
-                    readOnly: true,
-                    decoration: CustomInputDecoration.basic(
-                      hintText: '날짜',
-                    ),
-                    onTap: () => _openCustomDatePicker(context),
-                  ),
-                ),
-              ],
+
+            TextFormField(
+              controller: _dateController,
+              readOnly: true,
+              decoration: CustomInputDecoration.basic(
+                hintText: '날짜',
+              ),
+              onTap: () => _openCustomDatePicker(context),
+            ),
+
+            const SizedBox(height: 16),
+            TextFormField(
+              decoration: CustomInputDecoration.basic(
+                  hintText: '제목을 입력하세요.'
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(

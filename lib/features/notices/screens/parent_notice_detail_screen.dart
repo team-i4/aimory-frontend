@@ -47,7 +47,7 @@ class ParentNoticeDetailScreen extends StatelessWidget {
 
             SizedBox(height: 16),
             Text(
-              notice.name, // 전달받은 Note 데이터의 이름 표시
+              notice.title, // 전달받은 Note 데이터의 이름 표시
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
             SizedBox(height: 16),
