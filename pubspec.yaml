@@ -36,15 +36,17 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_dotenv: ^5.2.1
 
-
   http: ^1.2.2          # API 통신
   provider: ^6.1.0      # 상태 관리
   shared_preferences: ^2.0.15 # 로컬 저장소
   dio: ^5.7.0           # 고급 HTTP 통신
-  json_serializable: ^6.7.1 # JSON 처리
+#  json_serializable: ^6.7.1 # JSON 처리
   flutter_native_splash: ^2.4.4
   intl: ^0.20.1
   image_picker: ^0.8.7+3
+  retrofit: ^4.4.2
+  json_annotation: ^4.9.0
+  flutter_riverpod: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -57,9 +59,13 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
-  build_runner: ^2.3.3  # 코드 생성 도구
+  build_runner: ^2.4.13  # 코드 생성 도구
 
   flutter_launcher_icons: ^0.13.1
+
+  retrofit_generator: ^9.1.5
+
+  json_serializable: ^6.9.0
 
 flutter_icons:
   android: true # 안드로이드 아이콘 변경
