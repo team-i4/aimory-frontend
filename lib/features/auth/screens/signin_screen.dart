@@ -90,10 +90,7 @@ class SignInScreen extends StatelessWidget {
                 // 회원가입 링크
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                    );
+                    Navigator.pushNamed(context, '/signup'); // 회원가입 화면으로 이동
                   },
                   child: const Text(
                     '회원가입',
