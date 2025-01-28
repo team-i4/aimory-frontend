@@ -1,10 +1,11 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:flutter/material.dart';
+
 import '../models/notice_model.dart';
 
 class ParentNoticeDetailScreen extends StatelessWidget {
 
-  final Notice notice; // Notice 데이터 전달받음
+  final NoticeModel notice; // Notice 데이터 전달받음
   // 생성자에서 Note 데이터 초기화
   const ParentNoticeDetailScreen({Key? key, required this.notice}) : super(key: key);
 
@@ -38,7 +39,7 @@ class ParentNoticeDetailScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  notice.date, // 전달받은 Notice 데이터의 날짜 표시
+                  notice.date ?? "", // 전달받은 Notice 데이터의 날짜 표시
                   style: TextStyle(fontSize: 16, color: LIGHT_GREY_COLOR),
                 ),
                 SizedBox(width: 10.0,),
@@ -53,16 +54,16 @@ class ParentNoticeDetailScreen extends StatelessWidget {
             SizedBox(height: 16),
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.asset(
-                notice.imageUrl, // 전달받은 Note 데이터의 이미지 URL
+              child: Image.network(
+                notice.images?.isNotEmpty == true ? notice.images!.first : "https://via.placeholder.com/200",
                 fit: BoxFit.cover,
                 height: 200,
                 width: double.infinity,
-              ),
+              )
             ),
             SizedBox(height: 16),
             Text(
-              notice.description, // 전달받은 Note 데이터의 설명 표시
+              notice.content, // 전달받은 Note 데이터의 설명 표시
               style: TextStyle(fontSize: 16),
             ),
           ],
