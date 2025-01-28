@@ -29,7 +29,9 @@ Future<bool> performLogin(AuthService authService, String email, String password
     final response = await authService.login(request);
 
     if (response.apiToken.isNotEmpty) {
+
       await SecureStorage.saveToken(response.apiToken); // Access Token 저장
+      await SecureStorage.saveTeacherId(response.member.id); // teacherId 저장
       print("로그인 성공! Access Token: ${response.apiToken}");
       print("사용자 정보: ${response.member.name} (${response.member.role})");
 
