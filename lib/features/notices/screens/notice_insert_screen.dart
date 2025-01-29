@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:aimory_app/core/const/colors.dart';
@@ -46,6 +47,15 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
     setState(() {
       _selectedImages.removeAt(index);
     });
+  }
+
+  // 이미지 파일을 `MultipartFile`로 변환
+  Future<List<MultipartFile>> _convertFilesToMultipart(List<File> files) async {
+    List<MultipartFile> multipartFiles = [];
+    for (File file in files) {
+      multipartFiles.add(await MultipartFile.fromFile(file.path, filename: file.path.split('/').last));
+    }
+    return multipartFiles;
   }
 
   void _openCustomDatePicker(BuildContext context) {
@@ -132,7 +142,11 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
 
     try {
       final notice = NoticeModel(centerId: centerId, title: title, content: content, date: date);
-      final response = await _noticeService.createNotice("Bearer $token", notice, _selectedImages);
+      final List<MultipartFile> multipartImages = await _convertFilesToMultipart(_selectedImages);
+
+      final noticeJson = jsonEncode(notice.toJson()); // ✅ NoticeModel을 JSON 문자열로 변환
+
+      final response = await _noticeService.createNotice("Bearer $token", noticeJson, multipartImages);
 
       // 성공 시 알림 표시
       await _showSuccessDialog();

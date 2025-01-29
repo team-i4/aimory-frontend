@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'notice_model.g.dart';
+
+@JsonSerializable()
 class NoticeModel {
   final int? id; // 응답 시 존재
   final int centerId; // 요청 & 응답 공통
@@ -19,25 +24,10 @@ class NoticeModel {
     this.updatedAt,
   });
 
-  factory NoticeModel.fromJson(Map<String, dynamic> json) {
-    return NoticeModel(
-      id: json['id'],
-      centerId: json['centerId'],
-      images: (json['images'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
-      title: json['title'],
-      content: json['content'],
-      date: json['date'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
-    );
-  }
+  /// ✅ JSON → Dart 객체 변환 (API 응답 파싱)
+  factory NoticeModel.fromJson(Map<String, dynamic> json) =>
+      _$NoticeModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      "centerId": centerId,
-      "title": title,
-      "content": content,
-      "date": date,
-    };
-  }
+  /// ✅ Dart 객체 → JSON 변환 (API 요청 보낼 때 사용)
+  Map<String, dynamic> toJson() => _$NoticeModelToJson(this);
 }
