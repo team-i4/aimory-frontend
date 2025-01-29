@@ -43,7 +43,9 @@ class ParentNoticeListScreen extends ConsumerWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ParentNoticeDetailScreen(notice: notice)),
+                          MaterialPageRoute(
+                            builder: (context) => ParentNoticeDetailScreen(noticeId: notice.id!), // ✅ ID만 전달
+                          ),
                         );
                       },
                       child: Container(
