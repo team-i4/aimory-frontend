@@ -5,7 +5,6 @@ import 'package:aimory_app/features/notes/models/note_model.dart';
 import 'package:aimory_app/features/notes/services/note_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
@@ -117,7 +116,6 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
         throw Exception("로그인이 필요합니다.");
       }
 
-      // ✅ AI 그림 생성 요청
       final response = await _noteImageService.generateAiImage(
         "Bearer $token",
         {
@@ -127,7 +125,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
       );
 
       setState(() {
-        _previewImageUrl = response["image"]; // ✅ AI 생성된 이미지 URL 저장
+        _previewImageUrl = response.image;
         _showPreviewImage = true;
       });
     } catch (e) {
@@ -155,33 +153,16 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
     }
 
     try {
-      // ✅ 알림장 등록
       final NoteModel newNote = NoteModel(
         childId: int.parse(selectedChild!),
         content: _contentController.text.trim(),
         date: _dateController.text,
       );
 
-      final NoteModel createdNote = await _noteService.createNote(
+      await _noteService.createNote(
         "Bearer $token",
         newNote,
       );
-
-      int noteId = createdNote.id!;
-
-      // ✅ 사용자가 추가한 이미지 파일만 저장
-      final List<String> imageUrls = [];
-      for (var image in _selectedImages) {
-        imageUrls.add(image.path);
-      }
-
-      // ✅ 각 이미지 URL을 note_image 테이블에 저장
-      for (String imageUrl in imageUrls) {
-        await _noteImageService.saveNoteImage(
-          "Bearer $token",
-          {"note_id": noteId, "image_url": imageUrl},
-        );
-      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("알림장이 성공적으로 등록되었습니다.")),
