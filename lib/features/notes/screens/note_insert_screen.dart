@@ -5,11 +5,11 @@ import 'package:aimory_app/features/notes/models/note_model.dart';
 import 'package:aimory_app/features/notes/services/note_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
 import '../../../core/widgets/multi_image_picker.dart';
+import '../services/note_image_service.dart';
 
 class NoteInsertScreen extends StatefulWidget {
   const NoteInsertScreen({Key? key}) : super(key: key);
@@ -23,17 +23,19 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
   final TextEditingController _contentController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   List<File> _selectedImages = [];
-  File? _previewImage;
+  String? _previewImageUrl; // ✅ AI 생성 이미지 URL
   bool _showPreviewImage = false; // ✅ AI 생성 이미지 표시 여부
   String? selectedChild;
 
   final Dio _dio = Dio();
   late NoteService _noteService;
+  late NoteImageService _noteImageService;
 
   @override
   void initState() {
     super.initState();
     _noteService = NoteService(_dio);
+    _noteImageService = NoteImageService(_dio);
   }
 
   @override
@@ -51,7 +53,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
 
   void _removePreviewImage() {
     setState(() {
-      _previewImage = null;
+      _previewImageUrl = null;
       _showPreviewImage = false;
     });
   }
@@ -99,6 +101,40 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
     );
   }
 
+  /// ✅ **AI 그림 생성 API 호출**
+  Future<void> _generateAiImage() async {
+    if (selectedChild == null || _contentController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("원아명과 내용을 입력하세요.")),
+      );
+      return;
+    }
+
+    try {
+      String? token = await SecureStorage.readToken();
+      if (token == null) {
+        throw Exception("로그인이 필요합니다.");
+      }
+
+      final response = await _noteImageService.generateAiImage(
+        "Bearer $token",
+        {
+          "childId": int.parse(selectedChild!),
+          "content": _contentController.text.trim(),
+        },
+      );
+
+      setState(() {
+        _previewImageUrl = response.image;
+        _showPreviewImage = true;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("AI 그림 생성 실패: $e")),
+      );
+    }
+  }
+
   /// ✅ **알림장 등록 API 호출**
   Future<void> _createNote() async {
     if (selectedChild == null || _contentController.text.trim().isEmpty) {
@@ -117,18 +153,15 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
     }
 
     try {
-      // ✅ NoteModel 객체 생성
       final NoteModel newNote = NoteModel(
-        childId: int.parse(selectedChild!), // ✅ String → int 변환
+        childId: int.parse(selectedChild!),
         content: _contentController.text.trim(),
         date: _dateController.text,
-        image: null, // ✅ 이미지 URL은 서버에서 응답 후 받아야 하므로 null
       );
 
-      // ✅ API 호출 (JSON 변환 후 전달)
       await _noteService.createNote(
         "Bearer $token",
-        newNote, // ✅ NoteModel 객체 전달
+        newNote,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -224,7 +257,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
               ),
 
             // ✅ AI 그림 미리보기 유지
-            if (_showPreviewImage && _previewImage == null)
+            if (_showPreviewImage && _previewImageUrl == null)
               Stack(
                 children: [
                   Container(
