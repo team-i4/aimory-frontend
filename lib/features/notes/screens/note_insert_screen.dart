@@ -1,9 +1,12 @@
 import 'dart:io';
-
 import 'package:aimory_app/core/const/colors.dart';
+import 'package:aimory_app/core/util/secure_storage.dart';
+import 'package:aimory_app/features/notes/models/note_model.dart';
+import 'package:aimory_app/features/notes/services/note_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart'; // 날짜 포맷을 위해 추가
+import 'package:intl/intl.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
 import '../../../core/widgets/multi_image_picker.dart';
@@ -17,15 +20,33 @@ class NoteInsertScreen extends StatefulWidget {
 
 class _NoteInsertScreenState extends State<NoteInsertScreen> {
   final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   List<File> _selectedImages = [];
   File? _previewImage;
-  bool _showPreviewImage = false; // 이미지 표시 여부
+  bool _showPreviewImage = false; // ✅ AI 생성 이미지 표시 여부
+  String? selectedChild;
+
+  final Dio _dio = Dio();
+  late NoteService _noteService;
+
+  @override
+  void initState() {
+    super.initState();
+    _noteService = NoteService(_dio);
+  }
 
   @override
   void dispose() {
     _dateController.dispose();
+    _contentController.dispose();
     super.dispose();
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
   }
 
   void _removePreviewImage() {
@@ -35,67 +56,90 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
     });
   }
 
-  void _removeImage(int index) {
-    setState(() {
-      _selectedImages.removeAt(index);
-    });
-  }
-
   void _openCustomDatePicker(BuildContext context) {
     showModalBottomSheet(
       backgroundColor: Colors.white,
-      isScrollControlled: true, // 화면 크기에 따라 모달 높이 조정 가능
+      isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: MID_GREY_COLOR, // 선택된 날짜 색상
-              onPrimary: Colors.white, // 선택된 날짜의 텍스트 색상
-              onSurface: BLACK_COLOR, // 기본 텍스트 색상
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.purple, // "취소", "확인" 버튼 색상
-              ),
+              primary: MID_GREY_COLOR,
+              onPrimary: Colors.white,
+              onSurface: BLACK_COLOR,
             ),
           ),
-          child: SingleChildScrollView( // 스크롤 가능하도록
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: const Text(
-                    "날짜 선택",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: const Text("날짜 선택", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+              ),
+              SizedBox(
+                height: 360,
+                child: CalendarDatePicker(
+                  initialDate: _selectedDate,
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                  onDateChanged: (DateTime newDate) {
+                    setState(() {
+                      _selectedDate = newDate;
+                      _dateController.text = DateFormat('yyyy-MM-dd').format(newDate);
+                    });
+                    Navigator.pop(context);
+                  },
                 ),
-                SizedBox(
-                  height: 360, // 달력 높이 조절
-                  child: CalendarDatePicker(
-                    initialDate: _selectedDate,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                    onDateChanged: (DateTime newDate) {
-                      setState(() {
-                        _selectedDate = newDate;
-                        _dateController.text =
-                            DateFormat('yyyy-MM-dd').format(newDate); // 날짜 포맷 변경
-                      });
-                      Navigator.pop(context); // 날짜 선택 후 모달 닫기
-                    },
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
     );
+  }
+
+  /// ✅ **알림장 등록 API 호출**
+  Future<void> _createNote() async {
+    if (selectedChild == null || _contentController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("원아명과 내용을 입력하세요.")),
+      );
+      return;
+    }
+
+    String? token = await SecureStorage.readToken();
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("로그인이 필요합니다.")),
+      );
+      return;
+    }
+
+    try {
+      // ✅ NoteModel 객체 생성
+      final NoteModel newNote = NoteModel(
+        childId: int.parse(selectedChild!), // ✅ String → int 변환
+        content: _contentController.text.trim(),
+        date: _dateController.text,
+        image: null, // ✅ 이미지 URL은 서버에서 응답 후 받아야 하므로 null
+      );
+
+      // ✅ API 호출 (JSON 변환 후 전달)
+      await _noteService.createNote(
+        "Bearer $token",
+        newNote, // ✅ NoteModel 객체 전달
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("알림장이 성공적으로 등록되었습니다.")),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("알림장 등록 실패: $e")),
+      );
+    }
   }
 
   @override
@@ -104,19 +148,8 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
       appBar: AppBar(
         backgroundColor: MAIN_YELLOW,
         centerTitle: true,
-        title: const Text(
-          '알림장',
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.keyboard_backspace),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        title: const Text("알림장", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
+        leading: IconButton(icon: const Icon(Icons.keyboard_backspace), onPressed: () => Navigator.pop(context)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -127,14 +160,12 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    decoration: CustomInputDecoration.basic(
-                      hintText: '원아명',
-                    ),
+                    decoration: CustomInputDecoration.basic(hintText: '원아명'),
                     items: const [
-                      DropdownMenuItem(value: 'option1', child: Text('Option 1')),
-                      DropdownMenuItem(value: 'option2', child: Text('Option 2')),
+                      DropdownMenuItem(value: '1', child: Text('아이 1')),
+                      DropdownMenuItem(value: '2', child: Text('아이 2')),
                     ],
-                    onChanged: (value) {},
+                    onChanged: (value) => setState(() => selectedChild = value),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -142,9 +173,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                   child: TextFormField(
                     controller: _dateController,
                     readOnly: true,
-                    decoration: CustomInputDecoration.basic(
-                      hintText: '날짜',
-                    ),
+                    decoration: CustomInputDecoration.basic(hintText: '날짜'),
                     onTap: () => _openCustomDatePicker(context),
                   ),
                 ),
@@ -152,12 +181,13 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _contentController,
               maxLines: 10,
-              decoration: CustomInputDecoration.basic(
-                hintText: '알림장 내용을 써주세요.',
-              ),
+              decoration: CustomInputDecoration.basic(hintText: '알림장 내용을 써주세요.'),
             ),
             const SizedBox(height: 16),
+
+            // ✅ 기존 이미지 리스트 유지
             if (_selectedImages.isNotEmpty)
               Wrap(
                 spacing: 8.0,
@@ -184,11 +214,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                           child: const CircleAvatar(
                             radius: 10,
                             backgroundColor: MAIN_YELLOW,
-                            child: Icon(
-                              Icons.close,
-                              color: MAIN_DARK_GREY,
-                              size: 14,
-                            ),
+                            child: Icon(Icons.close, color: MAIN_DARK_GREY, size: 14),
                           ),
                         ),
                       ),
@@ -197,6 +223,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                 }).toList(),
               ),
 
+            // ✅ AI 그림 미리보기 유지
             if (_showPreviewImage && _previewImage == null)
               Stack(
                 children: [
@@ -204,10 +231,7 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                     width: double.infinity,
                     height: 200,
                     color: Colors.grey.shade300,
-                    child: Image.asset(
-                      'assets/img/notice_img_sample.jpg',
-                      fit: BoxFit.cover,
-                    ),
+                    child: Image.asset('assets/img/notice_img_sample.jpg', fit: BoxFit.cover),
                   ),
                   Positioned(
                     top: 0,
@@ -217,106 +241,29 @@ class _NoteInsertScreenState extends State<NoteInsertScreen> {
                       child: const CircleAvatar(
                         radius: 14,
                         backgroundColor: MAIN_YELLOW,
-                        child: Icon(
-                          Icons.close,
-                          color: MAIN_DARK_GREY,
-                          size: 16,
-                        ),
+                        child: Icon(Icons.close, color: MAIN_DARK_GREY, size: 16),
                       ),
                     ),
                   ),
                 ],
               ),
 
-            if (_showPreviewImage && _previewImage != null)
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 200,
-                      color: Colors.grey.shade300, // 이미지 없을 시 색상 채우기
-                      child: Image.file(
-                        _previewImage!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: _removePreviewImage,
-                      child: const CircleAvatar(
-                        radius: 14,
-                        backgroundColor: MAIN_YELLOW,
-                        child: Icon(
-                          Icons.close,
-                          color: MAIN_DARK_GREY,
-                          size: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: MultiImagePicker(
-                    onImagesPicked: (pickedFiles) {
-                      setState(() {
-                        _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
-                      });
-                    },
-                    builder: (context, pickImages) => ElevatedButton(
-                      onPressed: pickImages,
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 12.0),
-                        backgroundColor: MAIN_YELLOW,
-                        foregroundColor: BLACK_COLOR,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      child: const Text('사진추가'),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        // 기본 이미지 생성 로직 추가
-                        _showPreviewImage = true;
-                        _previewImage = null;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                      backgroundColor: BLACK_COLOR,
-                      foregroundColor: MAIN_YELLOW,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text('AI 그림 생성'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              text: '사진 등록하기',
-              onPressed: () {
-                print('사진 등록하기 버튼 클릭');
+            MultiImagePicker(
+              onImagesPicked: (pickedFiles) {
+                setState(() {
+                  _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
+                });
               },
+              builder: (context, pickImages) => ElevatedButton(
+                onPressed: pickImages,
+                style: ElevatedButton.styleFrom(backgroundColor: MAIN_YELLOW),
+                child: const Text("사진 추가"),
+              ),
             ),
+
+            const SizedBox(height: 16),
+            CustomButton(text: "등록하기", onPressed: _createNote),
           ],
         ),
       ),
