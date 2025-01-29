@@ -30,5 +30,12 @@ abstract class NoticeService {
       @Path("notice_id") int noticeId,
       );
 
+  /// ✅ 공지사항 삭제 API (여러 개 삭제 가능)
+  @DELETE("/notices")
+  Future<List<int>> deleteNotices(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> data, // {"data": [공지사항 ID 목록]}
+      );
+
 
 }
