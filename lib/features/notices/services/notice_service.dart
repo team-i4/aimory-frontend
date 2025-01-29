@@ -34,7 +34,7 @@ abstract class NoticeService {
   @DELETE("/notices")
   Future<List<int>> deleteNotices(
       @Header("Authorization") String token,
-      @Body() Map<String, dynamic> data, // {"data": [공지사항 ID 목록]}
+      @Body() Map<String, dynamic> requestBody,
       );
 
 

@@ -124,14 +124,14 @@ class _NoticeService implements NoticeService {
   @override
   Future<List<int>> deleteNotices(
     String token,
-    Map<String, dynamic> data,
+    Map<String, dynamic> requestBody,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(data);
+    _data.addAll(requestBody);
     final _options = _setStreamType<List<int>>(
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
