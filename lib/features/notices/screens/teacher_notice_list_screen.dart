@@ -61,7 +61,9 @@ class TeacherNoticeListScreen extends ConsumerWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => TeacherNoticeDetailScreen(notice: notice)),
+                          MaterialPageRoute(
+                            builder: (context) => TeacherNoticeDetailScreen(noticeId: notice.id!), // ✅ ID만 전달
+                          ),
                         );
                       },
                       child: Container(
