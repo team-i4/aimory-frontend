@@ -20,17 +20,17 @@ class _NoteImageService implements NoteImageService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<Map<String, String>> generateNoteImage(
+  Future<void> saveNoteImage(
     String token,
-    Map<String, dynamic> requestBody,
+    Map<String, dynamic> imageData,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(requestBody);
-    final _options = _setStreamType<Map<String, String>>(
+    _data.addAll(imageData);
+    final _options = _setStreamType<void>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -40,15 +40,7 @@ class _NoteImageService implements NoteImageService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late Map<String, String> _value;
-    try {
-      _value = _result.data!.cast<String, String>();
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
+    await _dio.fetch<void>(_options);
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

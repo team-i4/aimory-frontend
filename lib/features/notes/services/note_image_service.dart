@@ -7,10 +7,10 @@ part 'note_image_service.g.dart';
 abstract class NoteImageService {
   factory NoteImageService(Dio dio, {String baseUrl}) = _NoteImageService;
 
-  /// ✅ AI 그림 생성 API
+  /// ✅ 알림장 ID에 연결된 이미지 URL 저장
   @POST("/note-images")
-  Future<Map<String, String>> generateNoteImage(
+  Future<void> saveNoteImage(
       @Header("Authorization") String token,
-      @Body() Map<String, dynamic> requestBody, // childId, content 전달
+      @Body() Map<String, dynamic> imageData,
       );
 }
