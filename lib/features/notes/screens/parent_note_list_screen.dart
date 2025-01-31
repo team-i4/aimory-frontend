@@ -48,7 +48,7 @@ class ParentNoteListScreen extends ConsumerWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ParentNoteDetailScreen(note: note),
+                          builder: (context) => ParentNoteDetailScreen(noteId: note.id ?? 0),
                         ),
                       );
                     },
