@@ -24,3 +24,11 @@ final noteCreateProvider = FutureProvider.autoDispose
   if (token == null) throw Exception("로그인이 필요합니다.");
   return service.createNote("Bearer $token", note);
 });
+
+// ✅ 알림장 전체 조회 Provider 추가
+final noteListProvider = FutureProvider.autoDispose<List<NoteModel>>((ref) async {
+  final service = ref.read(noteServiceProvider);
+  final token = await SecureStorage.readToken();
+  if (token == null) throw Exception("로그인이 필요합니다.");
+  return service.fetchNotes("Bearer $token");
+});
