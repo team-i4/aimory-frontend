@@ -83,7 +83,7 @@ class TeacherNoteListScreen extends ConsumerWidget {
                         bool? isDeleted = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => TeacherNoteDetailScreen(note: note),
+                            builder: (context) => TeacherNoteDetailScreen(noteId: note.id ?? 0),
                           ),
                         );
 
