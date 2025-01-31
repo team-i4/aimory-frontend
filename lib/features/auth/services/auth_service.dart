@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
@@ -31,17 +32,18 @@ Future<bool> performLogin(AuthService authService, String email, String password
     if (response.apiToken.isNotEmpty) {
 
       await SecureStorage.saveToken(response.apiToken); // Access Token 저장
+      await SecureStorage.saveUserRole(response.member.role);
       await SecureStorage.saveTeacherId(response.member.id); // teacherId 저장
-      print("로그인 성공! Access Token: ${response.apiToken}");
-      print("사용자 정보: ${response.member.name} (${response.member.role})");
+      debugPrint("로그인 성공! Access Token: ${response.apiToken}");
+      debugPrint("사용자 정보: ${response.member.name} (${response.member.role})");
 
       return true;
     } else {
-      print("로그인 실패: 응답에 토큰이 없습니다.");
+      debugPrint("로그인 실패: 응답에 토큰이 없습니다.");
       return false;
     }
   } catch (e) {
-    print("로그인 요청 중 오류 발생: $e");
+    debugPrint("로그인 요청 중 오류 발생: $e");
     return false;
   }
 }

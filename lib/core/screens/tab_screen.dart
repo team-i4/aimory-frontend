@@ -11,9 +11,10 @@ import '../../features/notes/screens/teacher_note_list_screen.dart';
 import '../../features/photos/screens/parent_photo_list_screen.dart';
 import '../../features/photos/screens/teacher_album_screen.dart';
 import '../../features/auth/screens/teacher_info_screen.dart';
+import 'dart:developer' as dev;
 
 class TabScreen extends StatefulWidget {
-  static final GlobalKey<_TabScreenState> tabScreenKey = GlobalKey<_TabScreenState>(); // GlobalKey 추가
+  static final GlobalKey<_TabScreenState> tabScreenKey = GlobalKey<_TabScreenState>();
 
   const TabScreen({Key? key}) : super(key: key);
 
@@ -22,32 +23,22 @@ class TabScreen extends StatefulWidget {
 }
 
 class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController; // TabController
-  String? role;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
-    _loadRole();
-  }
-
-  Future<void> _loadRole() async {
-    final storedRole = await SecureStorage.readUserRole();
-    setState(() {
-      role = storedRole;
-    });
   }
 
   void changeTab(int index) {
     if (index < 0 || index >= _tabController.length) return;
-    _tabController.animateTo(index); // 탭 이동
+    _tabController.animateTo(index);
   }
-
 
   @override
   void dispose() {
-    _tabController.dispose(); // TabController 해제
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -63,8 +54,9 @@ class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMix
         }
 
         final userRole = snapshot.data ?? "UNKNOWN"; // 기본값 UNKNOWN 처리
+        debugPrint("현재 사용자 role: $userRole");
 
-        // ✅ role에 따른 TabView 설정
+
         final List<Widget> tabViews = userRole == "TEACHER"
             ? [
           TeacherHomeScreen(),
@@ -78,12 +70,12 @@ class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMix
           ParentHomeScreen(),
           ParentNoticeListScreen(),
           ParentNoteListScreen(),
-          ParentPhotoListScreen(childId: 123), // 원아 ID 직접 전달
+          ParentPhotoListScreen(childId: 123),
           ParentInfoScreen(),
         ]
             : [
           Scaffold(body: Center(child: Text("잘못된 접근입니다. 🚨"))),
-        ]; // ✅ role이 없거나 잘못된 경우 기본 화면
+        ];
 
         return Scaffold(
           appBar: _tabController.index == 0
@@ -98,7 +90,7 @@ class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMix
           ),
           body: TabBarView(
             controller: _tabController,
-            children: tabViews, // ✅ role에 맞는 TabView 적용
+            children: tabViews,
           ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _tabController.index,

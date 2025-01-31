@@ -10,7 +10,8 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: MAIN_YELLOW,
       elevation: 0,
-      toolbarHeight: 250, // 앱바의 높이 설정
+      toolbarHeight: 280, // 앱바의 높이 설정
+      automaticallyImplyLeading: false, // 기본값인 뒤로가기 버튼 제거
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0,),
         child: Column(
@@ -52,7 +53,7 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 50),
             // 날짜, 이름, 반 정보
             Text(
               "05월26일 금요일",
@@ -128,5 +129,5 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(240);
+  Size get preferredSize => const Size.fromHeight(260);
 }

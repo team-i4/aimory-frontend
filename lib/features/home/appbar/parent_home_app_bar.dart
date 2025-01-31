@@ -12,6 +12,7 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: MAIN_YELLOW,
       elevation: 0,
       toolbarHeight: 400, // 앱바의 높이 설정
+      automaticallyImplyLeading: false, // 기본값인 뒤로가기 버튼 제거
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0,),
         child: Column(
