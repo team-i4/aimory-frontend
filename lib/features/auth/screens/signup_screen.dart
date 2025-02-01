@@ -109,7 +109,7 @@ class SignUpScreen extends ConsumerWidget {
         );
 
         // 로그인 화면으로 이동
-        Navigator.pushReplacementNamed(context, '/signin');
+        Navigator.pushReplacementNamed(context, '/login');
       } catch (e) {
         // 에러 발생 시 처리
         Navigator.pop(context); // 로딩 모달 닫기
