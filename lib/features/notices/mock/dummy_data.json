@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "centerId": 1,
+    "title": "첫 번째 공지사항",
+    "content": "이것은 첫 번째 공지사항입니다.",
+    "date": "2024-02-01",
+    "images": ["https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTMWzNaWEaaR-C3EzZa5Er9k4tRmCEg5TYfPPF5gvDOC86gknUOxlTCu4wj2zKRMVZbREj4-UUayYCwQtTTBZayTkcmegjw_CCsaAQR8u0"],
+    "createdAt": "2024-02-01T10:00:00Z",
+    "updatedAt": "2024-02-01T12:00:00Z"
+  },
+  {
+    "id": 2,
+    "centerId": 1,
+    "title": "두 번째 공지사항",
+    "content": "이것은 두 번째 공지사항입니다.",
+    "date": "2024-02-02",
+    "images": ["https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTMWzNaWEaaR-C3EzZa5Er9k4tRmCEg5TYfPPF5gvDOC86gknUOxlTCu4wj2zKRMVZbREj4-UUayYCwQtTTBZayTkcmegjw_CCsaAQR8u0"],
+    "createdAt": "2024-02-02T10:00:00Z",
+    "updatedAt": "2024-02-02T12:00:00Z"
+  },
+  {
+    "id": 3,
+    "centerId": 1,
+    "title": "세 번째 공지사항",
+    "content": "이것은 세 번째 공지사항입니다.",
+    "date": "2024-02-03",
+    "images": ["https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTMWzNaWEaaR-C3EzZa5Er9k4tRmCEg5TYfPPF5gvDOC86gknUOxlTCu4wj2zKRMVZbREj4-UUayYCwQtTTBZayTkcmegjw_CCsaAQR8u0"],
+    "createdAt": "2024-02-03T10:00:00Z",
+    "updatedAt": "2024-02-03T12:00:00Z"
+  },
+  {
+    "id": 4,
+    "centerId": 1,
+    "title": "네 번째 공지사항",
+    "content": "이것은 네 번째 공지사항입니다.",
+    "date": "2024-02-04",
+    "images": ["https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTMWzNaWEaaR-C3EzZa5Er9k4tRmCEg5TYfPPF5gvDOC86gknUOxlTCu4wj2zKRMVZbREj4-UUayYCwQtTTBZayTkcmegjw_CCsaAQR8u0"],
+    "createdAt": "2024-02-04T10:00:00Z",
+    "updatedAt": "2024-02-04T12:00:00Z"
+  },
+  {
+    "id": 5,
+    "centerId": 1,
+    "title": "다섯 번째 공지사항",
+    "content": "이것은 다섯 번째 공지사항입니다.",
+    "date": "2024-02-05",
+    "images": ["https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTMWzNaWEaaR-C3EzZa5Er9k4tRmCEg5TYfPPF5gvDOC86gknUOxlTCu4wj2zKRMVZbREj4-UUayYCwQtTTBZayTkcmegjw_CCsaAQR8u0"],
+    "createdAt": "2024-02-05T10:00:00Z",
+    "updatedAt": "2024-02-05T12:00:00Z"
+  },
+  {
+    "id": 6,
+    "centerId": 1,
+    "title": "여섯 번째 공지사항",
+    "content": "이것은 여섯 번째 공지사항입니다.",
+    "date": "2024-02-06",
+    "images": ["https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTMWzNaWEaaR-C3EzZa5Er9k4tRmCEg5TYfPPF5gvDOC86gknUOxlTCu4wj2zKRMVZbREj4-UUayYCwQtTTBZayTkcmegjw_CCsaAQR8u0"],
+    "createdAt": "2024-02-06T10:00:00Z",
+    "updatedAt": "2024-02-06T12:00:00Z"
+  },
+  {
+    "id": 7,
+    "centerId": 1,
+    "title": "일곱 번째 공지사항",
+    "content": "이것은 일곱 번째 공지사항입니다.",
+    "date": "2024-02-07",
+    "images": ["https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTMWzNaWEaaR-C3EzZa5Er9k4tRmCEg5TYfPPF5gvDOC86gknUOxlTCu4wj2zKRMVZbREj4-UUayYCwQtTTBZayTkcmegjw_CCsaAQR8u0"],
+    "createdAt": "2024-02-07T10:00:00Z",
+    "updatedAt": "2024-02-07T12:00:00Z"
+  },
+  {
+    "id": 8,
+    "centerId": 1,
+    "title": "여덟 번째 공지사항",
+    "content": "이것은 여덟 번째 공지사항입니다.",
+    "date": "2024-02-08",
+    "images": ["https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTMWzNaWEaaR-C3EzZa5Er9k4tRmCEg5TYfPPF5gvDOC86gknUOxlTCu4wj2zKRMVZbREj4-UUayYCwQtTTBZayTkcmegjw_CCsaAQR8u0"],
+    "createdAt": "2024-02-08T10:00:00Z",
+    "updatedAt": "2024-02-08T12:00:00Z"
+  },
+  {
+    "id": 9,
+    "centerId": 1,
+    "title": "아홉 번째 공지사항",
+    "content": "이것은 아홉 번째 공지사항입니다.",
+    "date": "2024-02-09",
+    "images": ["https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTMWzNaWEaaR-C3EzZa5Er9k4tRmCEg5TYfPPF5gvDOC86gknUOxlTCu4wj2zKRMVZbREj4-UUayYCwQtTTBZayTkcmegjw_CCsaAQR8u0"],
+    "createdAt": "2024-02-09T10:00:00Z",
+    "updatedAt": "2024-02-09T12:00:00Z"
+  },
+  {
+    "id": 10,
+    "centerId": 1,
+    "title": "열 번째 공지사항",
+    "content": "이것은 열 번째 공지사항입니다.",
+    "date": "2024-02-10",
+    "images": ["https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTMWzNaWEaaR-C3EzZa5Er9k4tRmCEg5TYfPPF5gvDOC86gknUOxlTCu4wj2zKRMVZbREj4-UUayYCwQtTTBZayTkcmegjw_CCsaAQR8u0"],
+    "createdAt": "2024-02-10T10:00:00Z",
+    "updatedAt": "2024-02-10T12:00:00Z"
+  }
+]
