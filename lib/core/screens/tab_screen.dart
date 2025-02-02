@@ -94,7 +94,7 @@ class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMix
           ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _tabController.index,
-            onTap: (index) => _tabController.index = index,
+            onTap: (index) => _tabController.animateTo(index),
             type: BottomNavigationBarType.fixed,
             backgroundColor: Colors.white,
             selectedItemColor: BLACK_COLOR,
