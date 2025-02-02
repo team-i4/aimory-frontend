@@ -87,6 +87,7 @@ flutter:
   assets:
     - assets/img/
     - assets/img/aimory_calendar_logo.png
+    - assets/mock/notice_dummy_data.json
 
   fonts:
     - family: pretendard
