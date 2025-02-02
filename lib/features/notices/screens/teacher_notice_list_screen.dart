@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/const/colors.dart';
@@ -49,10 +51,14 @@ class TeacherNoticeListScreen extends ConsumerWidget {
                       return;
                     }
 
-                    Navigator.push(
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const NoticeInsertScreen()),
                     );
+
+                    if (result == true) {
+                      ref.invalidate(noticeListProvider); // ✅ 공지사항 목록 새로고침
+                    }
                   },
                   icon: const Icon(Icons.add, color: DARK_GREY_COLOR),
                   label: const Text(
@@ -87,6 +93,7 @@ class TeacherNoticeListScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final notice = notices[index];
                     return SwipeToDelete(
+
                       onDelete: () async {
                         String? token = await SecureStorage.readToken();
                         if (token == null || token.isEmpty) {
@@ -96,10 +103,31 @@ class TeacherNoticeListScreen extends ConsumerWidget {
                           return;
                         }
 
+                        bool? confirmDelete = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text("공지사항 삭제"),
+                            content: const Text("정말로 삭제하시겠습니까?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text("취소"),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: const Text("삭제"),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirmDelete != true) return;
+
                         try {
+                          debugPrint("🛠 DELETE 요청 데이터: ${jsonEncode({"data": [notice.id!]})}");
                           await ref.read(noticeServiceProvider).deleteNotices(
                             "Bearer $token",
-                            {"data": [notice.id!]}, // Map 형태로 변환
+                            {"data": [notice.id!]}, // 요청 형식
                           );
                           ref.invalidate(noticeListProvider); // 리스트 새로고침
                           ScaffoldMessenger.of(context).showSnackBar(

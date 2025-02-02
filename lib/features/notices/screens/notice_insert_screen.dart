@@ -105,12 +105,11 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
     );
   }
 
-  Future<void> _createNotice(NoticeService noticeService) async {
+  /// ✅ 공지사항 생성 함수
+  Future<bool> _createNotice(NoticeService noticeService) async {
     String title = _titleController.text.trim();
     String content = _contentController.text.trim();
-    String? date = _dateController.text
-        .trim()
-        .isEmpty ? null : _dateController.text.trim();
+    String? date = _dateController.text.trim().isEmpty ? null : _dateController.text.trim();
     String? token = await SecureStorage.readToken();
     int? centerId = await SecureStorage.readCenterId();
     String? role = await SecureStorage.readUserRole();
@@ -118,45 +117,37 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
     if (token == null || token.isEmpty || centerId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("로그인이 필요합니다.")));
-      return;
+      return false;
     }
 
-    if (title.isEmpty) {
+    if (title.isEmpty || content.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("제목을 입력하세요.")));
-      return;
-    }
-
-    if (content.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("공지사항 내용을 입력하세요.")));
-      return;
+          const SnackBar(content: Text("제목과 내용을 입력하세요.")));
+      return false;
     }
 
     if (role != "TEACHER") {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("선생님만 공지사항을 등록할 수 있습니다.")));
-      return;
+      return false;
     }
 
     bool? isConfirmed = await _showConfirmDialog();
-    if (isConfirmed != true) return;
+    if (isConfirmed != true) return false;
 
     try {
-      final notice = NoticeModel(
-          centerId: centerId, title: title, content: content, date: date);
-      final List<
-          MultipartFile> multipartImages = await _convertFilesToMultipart(
-          _selectedImages);
+      final notice = NoticeModel(centerId: centerId, title: title, content: content, date: date);
+      final List<MultipartFile> multipartImages = await _convertFilesToMultipart(_selectedImages);
       final noticeJson = jsonEncode(notice.toJson());
 
-      final response = await noticeService.createNotice(
-          "Bearer $token", noticeJson, multipartImages);
+      await noticeService.createNotice("Bearer $token", noticeJson, multipartImages);
 
       await _showSuccessDialog();
+      return true; // ✅ 성공 시 true 반환
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("공지사항 생성 실패: $e")));
+      return false; // ✅ 실패 시 false 반환
     }
   }
 
@@ -195,20 +186,17 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: Colors.white,
-          title: const Text(
-              "공지사항 등록 완료", style: TextStyle(color: DARK_GREY_COLOR)),
-          content: const Text(
-              "공지사항이 성공적으로 등록되었습니다.", style: TextStyle(color: DARK_GREY_COLOR)),
+          title: const Text("공지사항 등록 완료", style: TextStyle(color: DARK_GREY_COLOR)),
+          content: const Text("공지사항이 성공적으로 등록되었습니다.", style: TextStyle(color: DARK_GREY_COLOR)),
           actions: [
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // 다이얼로그 닫기
-                Navigator.pop(context); // 이전 화면으로 이동
+                // Navigator.pop(context); // ✅ 다이얼로그 닫기
+                Navigator.pop(context, true); // ✅ 리스트 화면으로 이동 (true 반환)
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: DARK_GREY_COLOR,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               child: const Text("확인", style: TextStyle(color: Colors.white)),
             ),
@@ -337,8 +325,14 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
                 text: "등록하기",
                 onPressed: () async {
                   final dio = ref.read(dioProvider);
-                  final noticeService = NoticeService(dio);
-                  await _createNotice(noticeService);
+                  final noticeService = NoticeService(dio); // ✅ NoticeService 인스턴스 생성
+
+                  bool isSuccess = await _createNotice(noticeService);
+
+                  if (isSuccess) {
+                    ref.invalidate(noticeListProvider); // ✅ 기존 데이터 삭제
+                    Navigator.pop(context, true);
+                  }
                 },
               ),
             ],

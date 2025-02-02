@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:aimory_app/features/notices/mock/notice_mock_interceptor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
@@ -19,6 +21,20 @@ final dioProvider = Provider<Dio>((ref) {
   return dio;
 });
 
+final createNoticeProvider = FutureProvider.family<void, Map<String, dynamic>>((ref, requestData) async {
+  final service = ref.read(noticeServiceProvider);
+  final token = await SecureStorage.readToken();
+  if (token == null) {
+    throw Exception("토큰이 존재하지 않습니다.");
+  }
+
+  // 공지사항 생성 요청
+  await service.createNotice("Bearer $token", jsonEncode(requestData["data"]), requestData["images"]);
+
+  // ✅ 공지사항 목록 새로고침
+  ref.invalidate(noticeListProvider);
+});
+
 final noticeServiceProvider = Provider<NoticeService>((ref) {
   final dio = ref.read(dioProvider);
   return NoticeService(dio);
@@ -32,7 +48,17 @@ final noticeListProvider = FutureProvider<List<NoticeModel>>((ref) async {
     throw Exception("토큰이 존재하지 않습니다.");
   }
 
-  return await service.getNotices("Bearer $token"); // ✅ 변경된 API 사용
+  final rawResponse = await service.getNotices("Bearer $token");
+
+  // ✅ 백엔드 응답이 `{ "notices": [...] }` 형태이므로 변환 처리
+  if (rawResponse is Map<String, dynamic> && rawResponse.containsKey("notices")) {
+    final noticesList = rawResponse["notices"];
+    if (noticesList is List) {
+      return noticesList.map((item) => NoticeModel.fromJson(item as Map<String, dynamic>)).toList();
+    }
+  }
+
+  throw Exception("공지사항 데이터를 불러올 수 없습니다.");
 });
 
 /// ✅ 공지사항 단일 조회 추가
