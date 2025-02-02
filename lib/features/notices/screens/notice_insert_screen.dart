@@ -6,6 +6,7 @@ import 'package:aimory_app/core/util/secure_storage.dart';
 import 'package:aimory_app/features/notices/models/notice_model.dart';
 import 'package:aimory_app/features/notices/services/notice_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../../core/widgets/custom_button.dart';
@@ -13,27 +14,22 @@ import '../../../core/widgets/custom_input_decoration.dart';
 import '../../../core/widgets/multi_image_picker.dart';
 import 'package:dio/dio.dart';
 
-class NoticeInsertScreen extends StatefulWidget {
+import '../../auth/providers/auth_provider.dart';
+import '../mock/notice_mock_interceptor.dart';
+
+class NoticeInsertScreen extends ConsumerStatefulWidget {
   const NoticeInsertScreen({Key? key}) : super(key: key);
 
   @override
-  State<NoticeInsertScreen> createState() => _NoticeInsertScreenState();
+  ConsumerState<NoticeInsertScreen> createState() => _NoticeInsertScreenState();
 }
 
-class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
+class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   List<File> _selectedImages = [];
-  final Dio _dio = Dio();
-  late NoticeService _noticeService;
-
-  @override
-  void initState() {
-    super.initState();
-    _noticeService = NoticeService(_dio);
-  }
 
   @override
   void dispose() {
@@ -49,13 +45,12 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
     });
   }
 
-  // 이미지 파일을 `MultipartFile`로 변환
   Future<List<MultipartFile>> _convertFilesToMultipart(List<File> files) async {
-    List<MultipartFile> multipartFiles = [];
-    for (File file in files) {
-      multipartFiles.add(await MultipartFile.fromFile(file.path, filename: file.path.split('/').last));
-    }
-    return multipartFiles;
+    return Future.wait(files.map((file) async {
+      return await MultipartFile.fromFile(file.path, filename: file.path
+          .split('/')
+          .last);
+    }));
   }
 
   void _openCustomDatePicker(BuildContext context) {
@@ -95,7 +90,8 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
                     onDateChanged: (DateTime newDate) {
                       setState(() {
                         _selectedDate = newDate;
-                        _dateController.text = DateFormat('yyyy-MM-dd').format(newDate);
+                        _dateController.text = DateFormat('yyyy-MM-dd').format(
+                            newDate);
                       });
                       Navigator.pop(context);
                     },
@@ -109,53 +105,61 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
     );
   }
 
-  /// 공지사항 생성 API 호출
-  Future<void> _createNotice() async {
+  Future<void> _createNotice(NoticeService noticeService) async {
     String title = _titleController.text.trim();
     String content = _contentController.text.trim();
-    String? date = _dateController.text.trim().isEmpty ? null : _dateController.text.trim();
+    String? date = _dateController.text
+        .trim()
+        .isEmpty ? null : _dateController.text.trim();
     String? token = await SecureStorage.readToken();
     int? centerId = await SecureStorage.readCenterId();
     String? role = await SecureStorage.readUserRole();
 
-    // 필수 입력값 체크 (공백일 경우 스낵바 출력)
-    if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("제목을 입력하세요.")));
-      return;
-    }
-    if (content.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("공지사항 내용을 입력하세요.")));
-      return;
-    }
-    if (token == null || centerId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("로그인이 필요합니다.")));
-      return;
-    }
-    if (role != "TEACHER") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("선생님만 공지사항을 등록할 수 있습니다.")));
+    if (token == null || token.isEmpty || centerId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("로그인이 필요합니다.")));
       return;
     }
 
-    // 등록 확인 다이얼로그 띄우기
+    if (title.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("제목을 입력하세요.")));
+      return;
+    }
+
+    if (content.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("공지사항 내용을 입력하세요.")));
+      return;
+    }
+
+    if (role != "TEACHER") {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("선생님만 공지사항을 등록할 수 있습니다.")));
+      return;
+    }
+
     bool? isConfirmed = await _showConfirmDialog();
     if (isConfirmed != true) return;
 
     try {
-      final notice = NoticeModel(centerId: centerId, title: title, content: content, date: date);
-      final List<MultipartFile> multipartImages = await _convertFilesToMultipart(_selectedImages);
+      final notice = NoticeModel(
+          centerId: centerId, title: title, content: content, date: date);
+      final List<
+          MultipartFile> multipartImages = await _convertFilesToMultipart(
+          _selectedImages);
+      final noticeJson = jsonEncode(notice.toJson());
 
-      final noticeJson = jsonEncode(notice.toJson()); // ✅ NoticeModel을 JSON 문자열로 변환
+      final response = await noticeService.createNotice(
+          "Bearer $token", noticeJson, multipartImages);
 
-      final response = await _noticeService.createNotice("Bearer $token", noticeJson, multipartImages);
-
-      // 성공 시 알림 표시
       await _showSuccessDialog();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("공지사항 생성 실패: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("공지사항 생성 실패: $e")));
     }
   }
 
-  /// 공지사항 등록 확인 다이얼로그
   Future<bool?> _showConfirmDialog() async {
     return await showDialog<bool>(
       context: context,
@@ -163,19 +167,18 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: Colors.white,
-          title: const Text("공지사항 등록", style: TextStyle(color: DARK_GREY_COLOR)),
-          content: const Text("공지사항을 등록하시겠습니까?", style: TextStyle(color: DARK_GREY_COLOR)),
+          title: const Text(
+              "공지사항 등록", style: TextStyle(color: DARK_GREY_COLOR)),
+          content: const Text(
+              "공지사항을 등록하시겠습니까?", style: TextStyle(color: DARK_GREY_COLOR)),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context, false), // 취소: 다이얼로그 닫기
+              onPressed: () => Navigator.pop(context, false),
               child: const Text("취소", style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context, true), // 확인: 등록 진행
-              style: ElevatedButton.styleFrom(
-                backgroundColor: DARK_GREY_COLOR,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
+              onPressed: () => Navigator.pop(context, true),
+              style: ElevatedButton.styleFrom(backgroundColor: DARK_GREY_COLOR),
               child: const Text("확인", style: TextStyle(color: Colors.white)),
             ),
           ],
@@ -192,8 +195,10 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: Colors.white,
-          title: const Text("공지사항 등록 완료", style: TextStyle(color: DARK_GREY_COLOR)),
-          content: const Text("공지사항이 성공적으로 등록되었습니다.", style: TextStyle(color: DARK_GREY_COLOR)),
+          title: const Text(
+              "공지사항 등록 완료", style: TextStyle(color: DARK_GREY_COLOR)),
+          content: const Text(
+              "공지사항이 성공적으로 등록되었습니다.", style: TextStyle(color: DARK_GREY_COLOR)),
           actions: [
             ElevatedButton(
               onPressed: () {
@@ -202,7 +207,8 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: DARK_GREY_COLOR,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
               ),
               child: const Text("확인", style: TextStyle(color: Colors.white)),
             ),
@@ -214,76 +220,129 @@ class _NoticeInsertScreenState extends State<NoticeInsertScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final dio = ref.watch(dioProvider);
+    final _noticeService = NoticeService(dio);
+
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: MAIN_YELLOW,
         centerTitle: true,
-        title: const Text("공지사항", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
-        leading: IconButton(icon: const Icon(Icons.keyboard_backspace), onPressed: () => Navigator.pop(context)),
+        title: const Text("공지사항",
+            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
+        leading: IconButton(icon: const Icon(Icons.keyboard_backspace),
+            onPressed: () => Navigator.pop(context)),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(controller: _dateController, readOnly: true, decoration: CustomInputDecoration.basic(hintText: "날짜"), onTap: () => _openCustomDatePicker(context)),
-            const SizedBox(height: 16),
-            TextFormField(controller: _titleController, decoration: CustomInputDecoration.basic(hintText: "제목을 입력하세요.")),
-            const SizedBox(height: 16),
-            TextFormField(controller: _contentController, maxLines: 10, decoration: CustomInputDecoration.basic(hintText: "공지사항 내용을 써주세요.")),
-            const SizedBox(height: 16),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(), // ✅ 화면 터치하면 키보드 숨기기
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
 
-            if (_selectedImages.isNotEmpty)
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: _selectedImages.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  File image = entry.value;
-                  return Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.file(image, width: 100, height: 100, fit: BoxFit.cover),
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: () => _removeImage(index),
-                          child: const CircleAvatar(radius: 10, backgroundColor: MAIN_YELLOW, child: Icon(Icons.close, color: MAIN_DARK_GREY, size: 14)),
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
+              /// ✅ 키보드가 올라와도 UI가 자동 조정됨
+              Padding(
+                padding: EdgeInsets.only(bottom: MediaQuery
+                    .of(context)
+                    .viewInsets
+                    .bottom),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _dateController,
+                      readOnly: true,
+                      decoration: CustomInputDecoration.basic(hintText: "날짜"),
+                      onTap: () => _openCustomDatePicker(context),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: CustomInputDecoration.basic(
+                          hintText: "제목을 입력하세요."),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _contentController,
+                      maxLines: 10,
+                      decoration: CustomInputDecoration.basic(
+                          hintText: "공지사항 내용을 써주세요."),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
-
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: MultiImagePicker(
-                    onImagesPicked: (pickedFiles) {
-                      setState(() {
-                        _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
-                      });
-                    },
-                    builder: (context, pickImages) => ElevatedButton(
-                      onPressed: pickImages,
-                      style: ElevatedButton.styleFrom(elevation: 0, padding: const EdgeInsets.symmetric(vertical: 12.0), backgroundColor: MAIN_YELLOW, foregroundColor: BLACK_COLOR),
-                      child: const Text("사진추가"),
+              // 이미지 추가 버튼 및 리스트
+              if (_selectedImages.isNotEmpty)
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: _selectedImages
+                      .asMap()
+                      .entries
+                      .map((entry) {
+                    int index = entry.key;
+                    File image = entry.value;
+                    return Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.file(image, width: 100,
+                              height: 100,
+                              fit: BoxFit.cover),
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: () => _removeImage(index),
+                            child: const CircleAvatar(radius: 10,
+                                backgroundColor: MAIN_YELLOW,
+                                child: Icon(Icons.close, color: MAIN_DARK_GREY,
+                                    size: 14)),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: MultiImagePicker(
+                      onImagesPicked: (pickedFiles) {
+                        setState(() {
+                          _selectedImages.addAll(
+                              pickedFiles.map((file) => File(file.path)));
+                        });
+                      },
+                      builder: (context, pickImages) =>
+                          ElevatedButton(
+                            onPressed: pickImages,
+                            style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12.0),
+                                backgroundColor: MAIN_YELLOW,
+                                foregroundColor: BLACK_COLOR),
+                            child: const Text("사진추가"),
+                          ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
+                ],
+              ),
+              const SizedBox(height: 16),
+              CustomButton(
                 text: "등록하기",
-                onPressed: _createNotice
-            ),
-          ],
+                onPressed: () async {
+                  final dio = ref.read(dioProvider);
+                  final noticeService = NoticeService(dio);
+                  await _createNotice(noticeService);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
