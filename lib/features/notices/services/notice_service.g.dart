@@ -9,9 +9,7 @@ part of 'notice_service.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
 
 class _NoticeService implements NoticeService {
-  _NoticeService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://aimory.ap-northeast-2.elasticbeanstalk.com';
-  }
+  _NoticeService(this._dio, {this.baseUrl, this.errorLogger});
 
   final Dio _dio;
 
@@ -63,33 +61,25 @@ class _NoticeService implements NoticeService {
 
   @override
   Future<List<NoticeModel>> getNotices(String token) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
-    _headers.removeWhere((k, v) => v == null);
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<NoticeModel>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/notices',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    final _options = Options(
+      method: 'GET',
+      headers: _headers,
     );
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<NoticeModel> _value;
-    try {
-      _value = _result.data!
-          .map(
-            (dynamic i) => NoticeModel.fromJson(i as Map<String, dynamic>),
-          )
-          .toList();
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
+
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+      _options.compose(_dio.options, '/notices'),
+    );
+
+    if (_result.data == null || !_result.data!.containsKey("notices")) {
+      throw Exception("잘못된 응답 형식: ${_result.data}");
     }
+
+    // ✅ "notices" 키의 리스트를 직접 List<NoticeModel>로 변환
+    final List<NoticeModel> _value = (_result.data!["notices"] as List)
+        .map((e) => NoticeModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+
     return _value;
   }
 
@@ -122,7 +112,7 @@ class _NoticeService implements NoticeService {
   }
 
   @override
-  Future<List<int>> deleteNotices(
+  Future<void> deleteNotices(
     String token,
     Map<String, dynamic> requestBody,
   ) async {
@@ -132,7 +122,7 @@ class _NoticeService implements NoticeService {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(requestBody);
-    final _options = _setStreamType<List<int>>(
+    final _options = _setStreamType<void>(
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -142,15 +132,7 @@ class _NoticeService implements NoticeService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<int> _value;
-    try {
-      _value = _result.data!.cast<int>();
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
+    await _dio.fetch<void>(_options);
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

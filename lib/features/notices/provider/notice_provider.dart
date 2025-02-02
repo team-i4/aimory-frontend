@@ -6,16 +6,15 @@ import '../services/notice_service.dart';
 import '../../../core/util/secure_storage.dart';
 
 final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio();
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: "http://aimory.ap-northeast-2.elasticbeanstalk.com", // 실제 API URL
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ),
+  );
 
-  // Mock Data로 먼저 테스트를 위한 작업
-
-  bool useMockApi = true; // 실제 API 사용 여부 결정 (true: Mock, false: 실제 API)
-
-  if (useMockApi) {
-    // Mock Interceptor
-    dio.interceptors.add(NoticeMockInterceptor());
-  }
+  dio.interceptors.add(LogInterceptor(responseBody: true)); // 디버깅을 위해 로그 추가
 
   return dio;
 });
@@ -32,7 +31,8 @@ final noticeListProvider = FutureProvider<List<NoticeModel>>((ref) async {
   if (token == null) {
     throw Exception("토큰이 존재하지 않습니다.");
   }
-  return service.getNotices("Bearer $token");
+
+  return await service.getNotices("Bearer $token"); // ✅ 변경된 API 사용
 });
 
 /// ✅ 공지사항 단일 조회 추가
