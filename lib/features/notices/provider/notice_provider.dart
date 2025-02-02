@@ -1,3 +1,4 @@
+import 'package:aimory_app/features/notices/mock/notice_mock_interceptor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import '../models/notice_model.dart';
@@ -6,6 +7,16 @@ import '../../../core/util/secure_storage.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio();
+
+  // Mock Data로 먼저 테스트를 위한 작업
+
+  bool useMockApi = true; // 실제 API 사용 여부 결정 (true: Mock, false: 실제 API)
+
+  if (useMockApi) {
+    // Mock Interceptor
+    dio.interceptors.add(NoticeMockInterceptor());
+  }
+
   return dio;
 });
 

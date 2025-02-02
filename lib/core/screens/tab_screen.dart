@@ -24,11 +24,22 @@ class TabScreen extends StatefulWidget {
 
 class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  Future<String?>? _userRoleFuture;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
+
+    // 한 번만 실행하고 저장
+    _userRoleFuture = SecureStorage.readUserRole();
+
+    // 탭 변경 시 setState()를 호출하도록 리스너 추가
+    _tabController.addListener(() {
+      if (mounted) {
+        setState(() {});  // 탭이 변경될 때 UI 업데이트
+      }
+    });
   }
 
   void changeTab(int index) {
@@ -45,7 +56,7 @@ class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String?>(
-      future: SecureStorage.readUserRole(), // ✅ 비동기로 role 가져오기
+      future: _userRoleFuture, // ✅ 비동기로 role 가져오기
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
@@ -81,20 +92,20 @@ class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMix
           appBar: _tabController.index == 0
               ? null
               : AppBar(
-            centerTitle: true,
-            title: Text(
-              ["홈", "공지사항", "알림장", "사진첩", "내정보"][_tabController.index],
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600),
-            ),
-            backgroundColor: MAIN_YELLOW,
-          ),
+                  centerTitle: true,
+                  title: Text(
+                    ["홈", "공지사항", "알림장", "사진첩", "내정보"][_tabController.index],
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600),
+                  ),
+                  backgroundColor: MAIN_YELLOW,
+                ),
           body: TabBarView(
             controller: _tabController,
             children: tabViews,
           ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _tabController.index,
-            onTap: (index) => _tabController.index = index,
+            onTap: (index) => _tabController.animateTo(index),
             type: BottomNavigationBarType.fixed,
             backgroundColor: Colors.white,
             selectedItemColor: BLACK_COLOR,

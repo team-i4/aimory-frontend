@@ -69,54 +69,61 @@ class TeacherHomeScreen extends ConsumerWidget {
 
                         // ✅ 공지사항 API 연동
                         noticeListAsync.when(
-                          data: (notices) => Container(
-                            margin: EdgeInsets.zero,
-                            padding: EdgeInsets.zero,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: BORDER_GREY_COLOR, width: 1),
-                            ),
-                            child: ListView.builder(
+                          data: (notices) {
+                            // ✅ 최신 3개만 가져오도록 리스트 제한
+                            final latestNotices = notices.length > 3 ? notices.take(3).toList() : notices;
+
+                            return Container(
+
+                              margin: EdgeInsets.zero,
                               padding: EdgeInsets.zero,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: notices.length, // ✅ API에서 가져온 데이터 개수
-                              itemBuilder: (context, index) {
-                                final notice = notices[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            TeacherNoticeDetailScreen(noticeId: notice.id ?? 0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: BORDER_GREY_COLOR, width: 1),
+                              ),
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: latestNotices.length, // ✅ API에서 가져온 데이터 개수
+                                itemBuilder: (context, index) {
+                                  final notice = latestNotices[index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              TeacherNoticeDetailScreen(noticeId: notice.id ?? 0),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.all(0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        color: Colors.white, // 배경색
                                       ),
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.all(0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      color: Colors.white, // 배경색
+                                      child: Column(
+                                        children: [
+                                          ListTile(
+                                            title: Text(notice.title),
+                                            subtitle: Text(notice.title),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.symmetric(horizontal: 10.0),
+                                            height: 1,
+                                            color: BORDER_GREY_COLOR,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    child: Column(
-                                      children: [
-                                        ListTile(
-                                          title: Text(notice.title),
-                                          subtitle: Text(notice.title),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.symmetric(horizontal: 10.0),
-                                          height: 1,
-                                          color: BORDER_GREY_COLOR,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+
                           loading: () => Center(child: CircularProgressIndicator()), // ✅ 로딩 상태
                           error: (err, stack) => Center(child: Text("공지사항을 불러올 수 없습니다. 🚨")), // ✅ 에러 처리
                         ),
