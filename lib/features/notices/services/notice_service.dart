@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
+import '../../../core/util/secure_storage.dart';
 import '../models/notice_model.dart';
+import '../provider/notice_provider.dart';
 
 part 'notice_service.g.dart';
 
-@RestApi()
+@RestApi(baseUrl: "http://aimory.ap-northeast-2.elasticbeanstalk.com")
 abstract class NoticeService {
   factory NoticeService(Dio dio, {String baseUrl}) = _NoticeService;
 
@@ -14,13 +17,13 @@ abstract class NoticeService {
   @MultiPart()
   Future<NoticeModel> createNotice(
       @Header("Authorization") String token,
-      @Part(name: "data") String noticeJson, // JSON 문자열
-      @Part(name: "images") List<MultipartFile>? images, // 이미지 업로드
+      @Part(name: "data") String noticeJson,
+      @Part(name: "images") List<MultipartFile>? images,
       );
 
   /// ✅ 공지사항 전체 조회 API
   @GET("/notices")
-  Future<List<NoticeModel>> getNotices(@Header("Authorization") String token);
+  Future<dynamic> getNotices(@Header("Authorization") String token);
 
   /// ✅ 공지사항 단일 조회 API
   @GET("/notices/{notice_id}")
@@ -29,10 +32,31 @@ abstract class NoticeService {
       @Path("notice_id") int noticeId,
       );
 
-  /// ✅ 공지사항 삭제 API (여러 개 삭제 가능)
+  /// ✅ 공지사항 삭제 API
   @DELETE("/notices")
   Future<void> deleteNotices(
       @Header("Authorization") String token,
-      @Body() Map<String, dynamic> requestBody, // 백엔드가 Body를 받는 경우 유지
+      @Body() Map<String, dynamic> requestBody,
       );
 }
+
+/// ✅ 공지사항 리스트를 관리하는 FutureProvider
+final noticeListProvider = FutureProvider<List<NoticeModel>>((ref) async {
+  final service = ref.read(noticeServiceProvider);
+  final token = await SecureStorage.readToken();
+  if (token == null) {
+    throw Exception("토큰이 존재하지 않습니다.");
+  }
+
+  final rawResponse = await service.getNotices("Bearer $token");
+
+  // 🔹 응답이 `Map<String, dynamic>`이면 `{ "notices": [...] }` 형태일 가능성 높음
+  if (rawResponse is Map<String, dynamic> && rawResponse.containsKey("notices")) {
+    final noticesList = rawResponse["notices"];
+    if (noticesList is List) {
+      return noticesList.map((item) => NoticeModel.fromJson(item as Map<String, dynamic>)).toList();
+    }
+  }
+
+  throw Exception("공지사항 데이터를 불러올 수 없습니다.");
+});
