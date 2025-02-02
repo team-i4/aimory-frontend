@@ -18,6 +18,7 @@ class TeacherNoticeListScreen extends ConsumerWidget {
     return Scaffold(
       body: Column(
         children: [
+          // ✅ 상단 공지사항 개수 및 작성 버튼
           Container(
             color: F4_GREY_COLOR,
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20.0),
@@ -25,19 +26,41 @@ class TeacherNoticeListScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 noticeListAsync.when(
-                  data: (notices) => Text("${notices.length}개", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
-                  loading: () => const Text("로딩 중...", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
-                  error: (_, __) => const Text("오류 발생", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
+                  data: (notices) => Text(
+                    "${notices.length}개",
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
+                  ),
+                  loading: () => const Text(
+                    "로딩 중...",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
+                  ),
+                  error: (_, __) => const Text(
+                    "오류 발생",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
+                  ),
                 ),
-                TextButton.icon(
-                  onPressed: () {
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    String? token = await SecureStorage.readToken();
+                    if (token == null || token.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("🚨 로그인이 필요합니다.")),
+                      );
+                      return;
+                    }
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const NoticeInsertScreen()),
                     );
                   },
-                  label: const Text("공지사항 작성하기", style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14)),
-                  style: TextButton.styleFrom(
+                  icon: const Icon(Icons.add, color: DARK_GREY_COLOR),
+                  label: const Text(
+                    "공지사항 작성하기",
+                    style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
                     backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -48,23 +71,27 @@ class TeacherNoticeListScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 20.0),
+
+          const SizedBox(height: 10.0),
+
+          // ✅ 공지사항 목록
           Expanded(
             child: noticeListAsync.when(
               data: (notices) {
                 if (notices.isEmpty) {
-                  return const Center(child: Text("공지사항이 없습니다."));
+                  return const Center(child: Text("📢 공지사항이 없습니다."));
                 }
+
                 return ListView.builder(
                   itemCount: notices.length,
                   itemBuilder: (context, index) {
                     final notice = notices[index];
                     return SwipeToDelete(
                       onDelete: () async {
-                        final token = await SecureStorage.readToken(); // ✅ 토큰 가져오기
-                        if (token == null) {
+                        String? token = await SecureStorage.readToken();
+                        if (token == null || token.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("로그인이 필요합니다.")),
+                            const SnackBar(content: Text("🚨 로그인이 필요합니다.")),
                           );
                           return;
                         }
@@ -75,6 +102,9 @@ class TeacherNoticeListScreen extends ConsumerWidget {
                             {"data": [notice.id!]}, // Map 형태로 변환
                           );
                           ref.invalidate(noticeListProvider); // 리스트 새로고침
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("공지사항이 삭제되었습니다.")),
+                          );
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text("삭제 실패: $e")),
@@ -85,39 +115,65 @@ class TeacherNoticeListScreen extends ConsumerWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => TeacherNoticeDetailScreen(noticeId: notice.id!)),
+                            MaterialPageRoute(
+                              builder: (context) => TeacherNoticeDetailScreen(noticeId: notice.id!),
+                            ),
                           );
                         },
                         child: Container(
                           margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-                          padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 7.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: BORDER_GREY_COLOR, width: 1),
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(8),
                                 child: notice.images != null && notice.images!.isNotEmpty
-                                    ? Image.network(notice.images!.first, height: 80, width: 80, fit: BoxFit.cover)
-                                    : const Icon(Icons.image_not_supported, size: 80, color: Colors.grey),
+                                    ? Image.network(
+                                  notice.images!.first,
+                                  height: 80,
+                                  width: 80,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => const Icon(
+                                    Icons.image_not_supported,
+                                    size: 80,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                                    : const Icon(
+                                  Icons.image_not_supported,
+                                  size: 80,
+                                  color: Colors.grey,
+                                ),
                               ),
                               const SizedBox(width: 15.0),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(notice.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                                    Text(notice.date ?? "날짜 없음", style: const TextStyle(fontSize: 12, color: LIGHT_GREY_COLOR)),
-                                    Text(notice.content, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14)),
+                                    Text(
+                                      notice.title,
+                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(
+                                      notice.date ?? "날짜 없음",
+                                      style: const TextStyle(fontSize: 12, color: LIGHT_GREY_COLOR),
+                                    ),
+                                    Text(
+                                      notice.content,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
                                   ],
                                 ),
                               ),
-                              const Icon(Icons.more_vert, size: 16.0),
+                              const Icon(Icons.chevron_right, size: 20.0, color: MID_GREY_COLOR),
                             ],
                           ),
                         ),
@@ -127,7 +183,28 @@ class TeacherNoticeListScreen extends ConsumerWidget {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text("공지사항 로드 실패: $error")),
+              error: (error, _) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "공지사항을 불러오지 못했습니다.",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "오류: $error",
+                      style: const TextStyle(fontSize: 12, color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => ref.invalidate(noticeListProvider),
+                      child: const Text("다시 시도"),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
