@@ -9,7 +9,9 @@ part of 'notice_service.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
 
 class _NoticeService implements NoticeService {
-  _NoticeService(this._dio, {this.baseUrl, this.errorLogger});
+  _NoticeService(this._dio, {this.baseUrl, this.errorLogger}) {
+    baseUrl ??= 'http://aimory.ap-northeast-2.elasticbeanstalk.com';
+  }
 
   final Dio _dio;
 
@@ -60,26 +62,24 @@ class _NoticeService implements NoticeService {
   }
 
   @override
-  Future<List<NoticeModel>> getNotices(String token) async {
+  Future<dynamic> getNotices(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
-    final _options = Options(
-      method: 'GET',
-      headers: _headers,
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/notices',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-      _options.compose(_dio.options, '/notices'),
-    );
-
-    if (_result.data == null || !_result.data!.containsKey("notices")) {
-      throw Exception("잘못된 응답 형식: ${_result.data}");
-    }
-
-    // ✅ "notices" 키의 리스트를 직접 List<NoticeModel>로 변환
-    final List<NoticeModel> _value = (_result.data!["notices"] as List)
-        .map((e) => NoticeModel.fromJson(e as Map<String, dynamic>))
-        .toList();
-
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
     return _value;
   }
 
