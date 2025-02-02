@@ -29,34 +29,37 @@ class TeacherNoticeDetailScreen extends ConsumerWidget {
         ),
       ),
       body: noticeAsync.when(
-        data: (notice) => Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(notice.date ?? "날짜 없음", style: const TextStyle(fontSize: 16, color: LIGHT_GREY_COLOR)),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(notice.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-              const SizedBox(height: 16),
-              notice.images != null && notice.images!.isNotEmpty
-                  ? ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  notice.images!.first,
-                  fit: BoxFit.cover,
-                  height: 200,
-                  width: double.infinity,
+        data: (notice) => SingleChildScrollView( // ✅ 스크롤 가능하게 변경
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(notice.date ?? "날짜 없음", style: const TextStyle(fontSize: 16, color: LIGHT_GREY_COLOR)),
+                  ],
                 ),
-              )
-                  : const Icon(Icons.image_not_supported, size: 80, color: Colors.grey),
-              const SizedBox(height: 16),
-              Text(notice.content, style: const TextStyle(fontSize: 16)),
-            ],
+                const SizedBox(height: 16),
+                Text(notice.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 16),
+                if (notice.images != null && notice.images!.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.network(
+                      notice.images!.first,
+                      fit: BoxFit.cover,
+                      height: 200,
+                      width: double.infinity,
+                    ),
+                  )
+                else
+                  const Icon(Icons.image_not_supported, size: 80, color: Colors.grey),
+                const SizedBox(height: 16),
+                Text(notice.content, style: const TextStyle(fontSize: 16)),
+              ],
+            ),
           ),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
