@@ -34,8 +34,14 @@ Future<bool> performLogin(AuthService authService, String email, String password
       await SecureStorage.saveToken(response.apiToken); // Access Token 저장
       await SecureStorage.saveUserRole(response.member.role);
       await SecureStorage.saveTeacherId(response.member.id); // teacherId 저장
+
+      // centerId 저장 추가 (누락된 경우에 저장)
+      if(response.member.centerId != null) {
+        await SecureStorage.saveCenterId(response.member.centerId);
+      }
       debugPrint("로그인 성공! Access Token: ${response.apiToken}");
       debugPrint("사용자 정보: ${response.member.name} (${response.member.role})");
+      debugPrint("🔍 Center ID 저장됨: ${response.member.centerId}");
 
       return true;
     } else {
