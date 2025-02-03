@@ -52,10 +52,12 @@ class _ParentPhotoListScreenState extends State<ParentPhotoListScreen> {
 
           final data = snapshot.data!;
           // 임시 사진 URL 리스트 생성
-          final List<String> photos = List.generate(
+          final List<Map<String, dynamic>> photos = List.generate(
             data.count,
-                (index) =>
-            'https://imgnews.pstatic.net/image/056/2025/01/15/0011875678_001_20250115182816671.jpg',
+                (index) => {
+              "photoId": index + 1, // 임시 photoId
+              "imageUrl": 'https://imgnews.pstatic.net/image/056/2025/01/15/0011875678_001_20250115182816671.jpg',
+            },
           );
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -90,18 +92,21 @@ class _ParentPhotoListScreenState extends State<ParentPhotoListScreen> {
                     ),
                     itemCount: data.count,
                     itemBuilder: (context, index) {
+                      final photo = photos[index]; // ✅ photoId 포함된 데이터 사용
+                      final photoUrl = photo["imageUrl"];
+                      final photoId = photo["photoId"];
 
-                      final photoUrl = photos[index];
                       return GestureDetector(
                         onTap: () {
-                          // PhotoDetailScreen으로 이동
+                          // ✅ PhotoDetailScreen으로 이동 (photoId 추가)
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => PhotoDetailScreen(
+                                photoId: photoId, // ✅ 필수 전달값 추가
                                 imageUrl: photoUrl,
                                 title: data.name,
-                                date: '2024.05.26. 오후 3:00', // 예제 날짜
+                                createdAt: '2024.05.26. 오후 3:00', // 예제 날짜
                                 role: 'parent', // 부모 역할
                               ),
                             ),

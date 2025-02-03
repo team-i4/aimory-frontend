@@ -17,6 +17,12 @@ abstract class PhotoService {
       @Header("Authorization") String token,
       @Query("childId") int childId,
       );
+
+  @DELETE("/photos")
+  Future<dynamic> deletePhotos(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> requestBody,
+      );
 }
 
 // ✅ Dio 인스턴스에서 요청/응답 로그 출력
