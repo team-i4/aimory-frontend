@@ -3,7 +3,10 @@ import 'package:aimory_app/features/notices/provider/notice_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/screens/tab_screen.dart';
+import '../../../core/widgets/format_date_time.dart';
 import '../../notices/screens/teacher_notice_detail_screen.dart';
+import '../../photos/provider/photo_provider.dart';
+import '../../photos/screens/photo_detail_screen.dart';
 import '../appbar/teacher_home_app_bar.dart';
 
 class TeacherHomeScreen extends ConsumerWidget {
@@ -183,27 +186,64 @@ class TeacherHomeScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 5),
 
-                        // ✅ 우리반 앨범 GridView 유지
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 8.0,
-                            mainAxisSpacing: 8.0,
-                          ),
-                          itemCount: 9, // ✅ 샘플 이미지 개수 유지
-                          itemBuilder: (context, index) {
-                            final photoUrl = 'https://static.rocketpunch.com/images/jibmusil/index/pc-section5-mood1-min.jpg';
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: LIGHT_GREY_COLOR,
-                                image: DecorationImage(
-                                  image: NetworkImage(photoUrl),
-                                  fit: BoxFit.cover,
-                                ),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
+                        // ✅ 우리반 앨범 GridView (API 연동)
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final photoListAsync = ref.watch(photoListProvider);
+
+                            return photoListAsync.when(
+                              data: (photos) {
+                                if (photos.isEmpty) {
+                                  return const Center(child: Text("📸 우리반 사진이 없습니다."));
+                                }
+
+                                // ✅ 최신 9개만 가져오기
+                                final latestPhotos = photos.length > 9 ? photos.take(9).toList() : photos;
+
+                                return GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 8.0,
+                                    mainAxisSpacing: 8.0,
+                                  ),
+                                  itemCount: latestPhotos.length, // ✅ API 데이터 개수 반영
+                                  itemBuilder: (context, index) {
+                                    final photo = latestPhotos[index]; // ✅ 현재 사진 객체 가져오기
+
+                                    return GestureDetector(
+                                      onTap: () {
+                                        // ✅ PhotoDetailScreen으로 이동
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => PhotoDetailScreen(
+                                              photoId: photo.photoId, // ✅ 사진 ID
+                                              imageUrl: photo.imageUrl, // ✅ 이미지 URL
+                                              title: photo.childName, // ✅ 아이 이름을 제목으로 설정
+                                              createdAt: formatDateTime(photo.createdAt), // ✅ 날짜 변환 후 전달
+                                              role: 'teacher', // ✅ 교사용 역할 설정
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: LIGHT_GREY_COLOR,
+                                          image: DecorationImage(
+                                            image: NetworkImage(photo.imageUrl),
+                                            fit: BoxFit.cover,
+                                          ),
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              loading: () => const Center(child: CircularProgressIndicator()), // ✅ 로딩 중
+                              error: (err, _) => Center(child: Text("❌ 사진을 불러올 수 없습니다.")), // ✅ 에러 처리
                             );
                           },
                         ),
