@@ -1,16 +1,15 @@
-class Photo {
+class PhotoModel {
   final int photoId;
   final String imageUrl;
+  final int childId;
 
-  Photo({
-    required this.photoId,
-    required this.imageUrl,
-  });
+  PhotoModel({required this.photoId, required this.imageUrl, required this.childId});
 
-  factory Photo.fromJson(Map<String, dynamic> json) {
-    return Photo(
-      photoId: json['photoId'] as int,
-      imageUrl: json['imageUrl'] as String,
+  factory PhotoModel.fromJson(Map<String, dynamic> json) {
+    return PhotoModel(
+      photoId: json['photoId'],
+      imageUrl: json['imageUrl'],
+      childId: json['childId'],
     );
   }
 }
