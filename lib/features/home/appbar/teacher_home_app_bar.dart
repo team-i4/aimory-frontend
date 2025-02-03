@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/const/colors.dart';
+import '../../auth/screens/center_info_update_screen.dart';
 
 class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TeacherHomeAppBar({Key? key}) : super(key: key);
@@ -9,7 +10,8 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: MAIN_YELLOW,
       elevation: 0,
-      toolbarHeight: 250, // 앱바의 높이 설정
+      toolbarHeight: 280, // 앱바의 높이 설정
+      automaticallyImplyLeading: false, // 기본값인 뒤로가기 버튼 제거
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0,),
         child: Column(
@@ -51,7 +53,7 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 50),
             // 날짜, 이름, 반 정보
             Text(
               "05월26일 금요일",
@@ -88,7 +90,12 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: TextButton.icon(
-                        onPressed: () {}, // 자세히 보기 버튼 기능
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CenterInfoUpdateScreen()),
+                          );
+                        }, // 자세히 보기 버튼 기능
                         icon: const Icon(Icons.add, size: 14, color: DARK_GREY_COLOR),
                         label: const Text(
                           "자세히 보기",
@@ -122,5 +129,5 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(240);
+  Size get preferredSize => const Size.fromHeight(260);
 }

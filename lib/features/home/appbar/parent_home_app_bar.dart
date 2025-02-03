@@ -1,5 +1,7 @@
+import 'package:aimory_app/features/search/screen/parent_search_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../core/const/colors.dart';
+import '../../auth/screens/child_info_update_screen.dart';
 
 class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ParentHomeAppBar({Key? key}) : super(key: key);
@@ -10,6 +12,7 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: MAIN_YELLOW,
       elevation: 0,
       toolbarHeight: 400, // 앱바의 높이 설정
+      automaticallyImplyLeading: false, // 기본값인 뒤로가기 버튼 제거
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0,),
         child: Column(
@@ -32,7 +35,12 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () {}, // 알림 버튼 기능
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ParentSearchScreen()),
+                        );
+                      }, // 알림 버튼 기능
                       icon: const Icon(
                         Icons.search_outlined,
                         size: 30,
@@ -69,7 +77,7 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "김하은 어린이의",
+                      "우리아이의",
                       style: TextStyle(
 
                         fontFamily: 'pretendard',
@@ -79,7 +87,8 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           "하루는 어땠을까요?",
@@ -90,18 +99,13 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                             color: DARK_GREY_COLOR,
                           ),
                         ),
-                        Icon(
-                          Icons.trending_flat_sharp,
-                          color: MAIN_DARK_GREY,
-                          size: 20,
-                        ),
                       ],
                     ),
                     const SizedBox(height: 30),
 
                     Container(
-                      width: 340,
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20.0),
+                      width: MediaQuery.of(context).size.width * 0.85, // 화면 너비의 90%로 설정
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         color: Colors.white,
@@ -109,71 +113,77 @@ class ParentHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '김하은',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontFamily: 'pretendard',
-                                      fontWeight: FontWeight.w700,
-                                      color: DARK_GREY_COLOR,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8,),
-                                  Text(
-                                    '만 4세',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontFamily: 'pretendard',
-                                      color: DARK_GREY_COLOR,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 5.0,),
-                              Text(
-                                '해바라기반',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'pretendard',
-                                  color: DARK_GREY_COLOR,
-                                ),
-                              ),
 
-                              const SizedBox(height: 16.0,),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextButton.icon(
-                                  onPressed: () {}, // 자세히 보기 버튼 기능
-                                  icon: const Icon(Icons.add, size: 14, color: Colors.white),
-                                  label: const Text(
-                                    "자세히 보기",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      '김하은',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontFamily: 'pretendard',
+                                        fontWeight: FontWeight.w700,
+                                        color: DARK_GREY_COLOR,
+                                      ),
                                     ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      '만 4세',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: 'pretendard',
+                                        color: DARK_GREY_COLOR,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5.0),
+                                Text(
+                                  '해바라기반',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'pretendard',
+                                    color: DARK_GREY_COLOR,
                                   ),
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: BLACK_COLOR,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                ),
+                                const SizedBox(height: 16.0),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextButton.icon(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => ChildInfoUpdateScreen()),
+                                      );
+                                    }, // 자세히 보기 버튼 기능
+                                    icon: const Icon(Icons.add, size: 14, color: Colors.white),
+                                    label: const Text(
+                                      "자세히 보기",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12
+                                      ),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: BLACK_COLOR,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+
                           CircleAvatar(
-                            radius: 40,
+                            radius: MediaQuery.of(context).size.width * 0.1, // 화면 너비 기준으로 동적 크기 설정
                             backgroundImage: AssetImage('assets/img/girl_sample.jpg'), // 교사 이미지 경로
                           ),
                         ],
-
                       ),
                     ),
 
