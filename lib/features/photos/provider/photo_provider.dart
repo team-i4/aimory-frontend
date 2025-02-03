@@ -12,6 +12,23 @@ final dioProvider = Provider<Dio>((ref) {
   return dio;
 });
 
+final photoDeleteProvider = FutureProvider.family<bool, List<int>>((ref, photoIds) async {
+  final service = ref.read(photoServiceProvider);
+  final token = await SecureStorage.readToken();
+  if (token == null) {
+    throw Exception("❌ 토큰이 없습니다.");
+  }
+
+  try {
+    final response = await service.deletePhotos("Bearer $token", {"data": photoIds});
+    debugPrint("✅ 사진 삭제 성공: $photoIds");
+    return true; // ✅ 성공 시 true 반환
+  } catch (e) {
+    debugPrint("❌ 사진 삭제 실패: $e");
+    return false; // ❌ 실패 시 false 반환
+  }
+});
+
 final photoServiceProvider = Provider<PhotoService>((ref) {
   final dio = ref.read(dioProvider);
   return PhotoService(dio);

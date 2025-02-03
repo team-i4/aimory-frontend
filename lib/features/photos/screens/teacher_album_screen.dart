@@ -17,26 +17,7 @@ class TeacherAlbumScreen extends ConsumerWidget {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            color: F4_GREY_COLOR,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.refresh, color: DARK_GREY_COLOR),
-                  onPressed: () {
-                    ref.refresh(photoListProvider); // ✅ 리스트 강제 갱신
-                  },
-                ),
-                TextButton.icon(
-                  onPressed: () {}, // ✅ 추후 이미지 업로드 기능 추가
-                  icon: const Icon(Icons.add, color: DARK_GREY_COLOR),
-                  label: const Text("사진 추가하기", style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14)),
-                ),
-              ],
-            ),
-          ),
+          _buildTopBar(ref),
           Expanded(
             child: photoListAsync.when(
               data: (photos) {
@@ -44,9 +25,8 @@ class TeacherAlbumScreen extends ConsumerWidget {
                   return const Center(child: Text("📸 사진이 없습니다."));
                 }
 
-                // 📌 전체 앨범 & 원아별 앨범 만들기
-                Map<int, List<PhotoModel>> albums = {};
-
+                // 📌 원아별 사진 그룹화
+                final Map<int, List<PhotoModel>> albums = {};
                 for (var photo in photos) {
                   albums.putIfAbsent(photo.childId, () => []).add(photo);
                 }
@@ -62,11 +42,14 @@ class TeacherAlbumScreen extends ConsumerWidget {
                   itemCount: albums.length + 1, // 전체 앨범 포함
                   itemBuilder: (context, index) {
                     if (index == 0) {
-                      return _buildAlbumTile(context, "전체", photos.length, photos);
+                      return _buildAlbumTile(
+                        context, ref, "전체", photos.length, photos, -1, // ✅ 전체 앨범은 childId 필요 없음
+                      );
                     }
                     final childId = albums.keys.elementAt(index - 1);
                     final albumPhotos = albums[childId] ?? [];
-                    return _buildAlbumTile(context, "원아 $childId", albumPhotos.length, albumPhotos);
+                    final childName = albumPhotos.first.childName; // ✅ 원아 이름 가져오기
+                    return _buildAlbumTile(context, ref, childName, albumPhotos.length, albumPhotos, childId);
                   },
                 );
               },
@@ -79,20 +62,63 @@ class TeacherAlbumScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAlbumTile(BuildContext context, String name, int count, List<PhotoModel> photos) {
+  /// ✅ 상단 바 (새로고침 & 사진 추가 버튼)
+  Widget _buildTopBar(WidgetRef ref) {
+    return Container(
+      color: F4_GREY_COLOR,
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: DARK_GREY_COLOR),
+            onPressed: () {
+              ref.refresh(photoListProvider); // ✅ 리스트 강제 갱신
+            },
+          ),
+          TextButton.icon(
+            onPressed: () {}, // ✅ 추후 이미지 업로드 기능 추가
+            icon: const Icon(Icons.add, color: DARK_GREY_COLOR),
+            label: const Text("사진 추가하기", style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14)),
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: const BorderSide(color: MID_GREY_COLOR, width: 1),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// ✅ 앨범 타일 위젯 (전체 & 원아별)
+  Widget _buildAlbumTile(
+      BuildContext context,
+      WidgetRef ref,
+      String name,
+      int count,
+      List<PhotoModel> photos,
+      int childId, // ✅ 특정 원아의 ID 전달 (-1이면 전체 앨범)
+      ) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final result = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => TeacherPhotoListScreen(
               childName: name,
+              childId: childId, // ✅ 필터링 정확도 향상을 위해 ID 전달
               photoCount: count,
-              photos: photos.map((e) => e.imageUrl).toList(),
-              allPhotos: photos.map((e) => e.toJson()).toList(), // ✅ allPhotos 추가
+              allPhotos: photos.map((e) => e.toJson()).toList(),
             ),
           ),
         );
+        if (result == true) {
+          ref.invalidate(photoListProvider); // ✅ 삭제 후 목록 다시 불러오기
+        }
       },
       child: Column(
         children: [

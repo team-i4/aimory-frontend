@@ -1,30 +1,54 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:aimory_app/features/photos/screens/photo_detail_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/widgets/format_date_time.dart';
+import '../provider/photo_provider.dart';
 
-class TeacherPhotoListScreen extends StatelessWidget {
-
-  final String childName; // 원아 이름
-  final int photoCount; // 원아 사진 개수
-  final List<String> photos; // 사진 URL 리스트
+class TeacherPhotoListScreen extends ConsumerStatefulWidget {
+  final String childName;
+  final int childId;
+  final int photoCount; // ✅ 추가해야 함!
   final List<Map<String, dynamic>> allPhotos;
 
   const TeacherPhotoListScreen({
     Key? key,
     required this.childName,
-    required this.photoCount,
-    required this.photos,
+    required this.childId,
+    required this.photoCount, // ✅ 추가!
     required this.allPhotos,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // 특정 원아의 사진만 필터링
-    final filteredPhotos = allPhotos
-        .where((photo) => photo['childName'] == childName)
-        .map((photo) => photo['photoUrl'] as String)
-        .toList();
+  _TeacherPhotoListScreenState createState() => _TeacherPhotoListScreenState();
+}
 
+class _TeacherPhotoListScreenState extends ConsumerState<TeacherPhotoListScreen> {
+  late List<Map<String, dynamic>> filteredPhotos;
+
+  @override
+  void initState() {
+    super.initState();
+    _filterPhotos();
+  }
+
+  /// ✅ 특정 원아의 사진만 필터링하는 함수
+  void _filterPhotos() {
+    setState(() {
+      if (widget.childId == -1) {
+        filteredPhotos = widget.allPhotos; // ✅ 전체 앨범
+      } else {
+        filteredPhotos = widget.allPhotos
+            .where((photo) => photo['childId'] == widget.childId)
+            .toList();
+      }
+    });
+
+    debugPrint("📸 필터링된 사진 개수: ${filteredPhotos.length}");
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -39,7 +63,7 @@ class TeacherPhotoListScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.keyboard_backspace_sharp, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context); // 이전 화면으로 돌아가기
+            Navigator.pop(context);
           },
         ),
       ),
@@ -48,59 +72,60 @@ class TeacherPhotoListScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 상단 정보 (사진 개수, 원아 이름)
-            Text(
-              '$photoCount개',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            // ✅ 총 사진 개수
+            Text('${filteredPhotos.length}개',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Text(
-              childName,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
+            Text(widget.childName,
+                style: const TextStyle(fontSize: 16, color: Colors.grey)),
             const SizedBox(height: 16),
 
-            // 사진 ListView
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // 한 줄에 세 개의 사진
+                  crossAxisCount: 3,
                   mainAxisSpacing: 8.0,
                   crossAxisSpacing: 8.0,
                 ),
-                itemCount: photos.length,
+                itemCount: filteredPhotos.length,
                 itemBuilder: (context, index) {
-                  final photoUrl = photos[index];
+                  final photo = filteredPhotos[index];
+                  final photoUrl = photo['imageUrl'] ?? '';
+                  final photoId = photo['photoId'] is int
+                      ? photo['photoId']
+                      : int.tryParse(photo['photoId'].toString()) ?? 0;
+
                   return GestureDetector(
-                    onTap: () {
-                      // PhotoDetailScreen으로 이동
-                      Navigator.push(
+                    onTap: () async {
+                      // ✅ 삭제 후 화면 갱신을 위해 pop의 result 값을 확인
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => PhotoDetailScreen(
+                            photoId: photoId,
                             imageUrl: photoUrl,
-                            title: childName,
-                            date: '2024.05.26. 오후 3:00', // 예제 날짜
-                            role: 'teacher', // 역할 전달 (teacher/parent)
+                            title: widget.childName,
+                            createdAt: formatDateTime(photo['createdAt']),
+                            role: 'teacher',
                           ),
                         ),
                       );
+
+                      if (result == true) {
+                        // ✅ 삭제 후 목록 업데이트
+                        _filterPhotos();
+                        ref.invalidate(photoListProvider); // ✅ Riverpod 데이터 갱신
+                      }
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: LIGHT_GREY_COLOR, // 기본 배경색
+                        color: LIGHT_GREY_COLOR,
                         image: photoUrl.isNotEmpty
                             ? DecorationImage(
-                          image: NetworkImage(photoUrl), // 로컬 이미지 표시
+                          image: NetworkImage(photoUrl),
                           fit: BoxFit.cover,
                         )
-                            : null, // 사진이 없는 경우 빈 박스
+                            : null,
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
