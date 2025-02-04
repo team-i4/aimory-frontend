@@ -8,7 +8,7 @@ import '../provider/notice_provider.dart';
 
 part 'notice_service.g.dart';
 
-@RestApi(baseUrl: "https://aimory.ap-northeast-2.elasticbeanstalk.com")
+@RestApi(baseUrl: "http://aimory.ap-northeast-2.elasticbeanstalk.com")
 abstract class NoticeService {
   factory NoticeService(Dio dio, {String baseUrl}) = _NoticeService;
 
@@ -16,26 +16,26 @@ abstract class NoticeService {
   @POST("/notices")
   @MultiPart()
   Future<NoticeModel> createNotice(
-      @Header("apiToken") String token,
+      @Header("Authorization") String token,
       @Part(name: "data") String noticeJson,
       @Part(name: "images") List<MultipartFile>? images,
       );
 
   /// ✅ 공지사항 전체 조회 API
   @GET("/notices")
-  Future<dynamic> getNotices(@Header("apiToken") String token);
+  Future<dynamic> getNotices(@Header("Authorization") String token);
 
   /// ✅ 공지사항 단일 조회 API
   @GET("/notices/{notice_id}")
   Future<NoticeModel> getNoticeById(
-      @Header("apiToken") String token,
+      @Header("Authorization") String token,
       @Path("notice_id") int noticeId,
       );
 
   /// ✅ 공지사항 삭제 API
   @DELETE("/notices")
   Future<void> deleteNotices(
-      @Header("apiToken") String token,
+      @Header("Authorization") String token,
       @Body() Map<String, dynamic> requestBody,
       );
 }

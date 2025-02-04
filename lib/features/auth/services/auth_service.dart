@@ -10,7 +10,7 @@ import 'package:aimory_app/core/util/secure_storage.dart';
 
 part 'auth_service.g.dart'; // Retrofit 자동 생성 파일
 
-@RestApi(baseUrl: "https://aimory.ap-northeast-2.elasticbeanstalk.com")
+@RestApi(baseUrl: "http://aimory.ap-northeast-2.elasticbeanstalk.com")
 abstract class AuthService {
   factory AuthService(Dio dio, {String baseUrl}) = _AuthService;
 
