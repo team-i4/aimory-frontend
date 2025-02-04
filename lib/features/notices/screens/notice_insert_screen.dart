@@ -170,7 +170,10 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
-              style: ElevatedButton.styleFrom(backgroundColor: DARK_GREY_COLOR),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DARK_GREY_COLOR,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
               child: const Text("확인", style: TextStyle(color: Colors.white)),
             ),
           ],
