@@ -10,9 +10,9 @@ abstract class NoteService {
 
   // 알림장 생성 API
   @POST("/notes")
-  Future<NoteModel> createNote(
+  Future<void> createNote(
       @Header("Authorization") String token,
-      @Body() NoteModel note, // JSON 변환 없이 NoteModel 객체를 바로 사용 가능!
+      @Body() Map<String, dynamic> noteData, // ✅ NoteModel 대신 Map<String, dynamic> 사용
       );
 
   // 알림장 전체 조회 API
