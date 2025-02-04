@@ -12,6 +12,13 @@ abstract class PhotoService {
   @GET("/photos")
   Future<dynamic> getPhotos(@Header("Authorization") String token);
 
+  @POST("/photos")
+  @MultiPart()
+  Future<dynamic> uploadPhotos(
+      @Header("apiToken") String token,
+      @Part() List<MultipartFile> files,
+      );
+
   @GET("/photos/child")
   Future<dynamic> getPhotosByChild(
       @Header("Authorization") String token,
