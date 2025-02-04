@@ -15,7 +15,7 @@ abstract class PhotoService {
   @POST("/photos")
   @MultiPart()
   Future<dynamic> uploadPhotos(
-      @Header("apiToken") String token,
+      @Header("Authorization") String token,
       @Part() List<MultipartFile> files,
       );
 
@@ -32,12 +32,13 @@ abstract class PhotoService {
       );
 }
 
-// ✅ Dio 인스턴스에서 요청/응답 로그 출력
+// ✅ Dio 인스턴스에서 요청/응답 로그 출력 (토큰 포함 여부 확인)
 final dio = Dio(BaseOptions(baseUrl: "http://aimory.ap-northeast-2.elasticbeanstalk.com"))
   ..interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) {
       debugPrint("📤 요청 URL: ${options.uri}");
       debugPrint("📤 요청 헤더: ${options.headers}");
+      debugPrint("📤 요청 데이터: ${options.data}");
       return handler.next(options);
     },
     onResponse: (response, handler) {
