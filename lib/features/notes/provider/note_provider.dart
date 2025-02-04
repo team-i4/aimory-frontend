@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
@@ -18,6 +20,21 @@ final noteServiceProvider = Provider<NoteService>((ref) {
 });
 
 // 알림장 생성 Provider
+final noteCreateProvider = FutureProvider.family<void, Map<String, dynamic>>((ref, requestData) async {
+  final service = ref.read(noteServiceProvider);
+  final token = await SecureStorage.readToken();
+  if (token == null) {
+    throw Exception("토큰이 존재하지 않습니다.");
+  }
+
+  // 알림장 생성 요청 (NoteModel 변환 없음)
+  await service.createNote("Bearer $token", requestData);
+
+  // ✅ 알림장 목록 새로고침
+  ref.invalidate(noteListProvider);
+});
+
+// 알림장 목록 Provider
 final noteListProvider = FutureProvider<List<NoteModel>>((ref) async {
   final service = ref.read(noteServiceProvider);
   final token = await SecureStorage.readToken();
