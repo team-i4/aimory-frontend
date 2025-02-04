@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:aimory_app/core/widgets/custom_yellow_button.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -116,25 +117,7 @@ class _PhotoInsertScreenState extends ConsumerState<PhotoInsertScreen> {
                         _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
                       });
                     },
-                    builder: (context, pickImages) => ElevatedButton(
-                      onPressed: pickImages,
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: MAIN_YELLOW,
-                        foregroundColor: BLACK_COLOR,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      child: const Text(
-                        "사진추가",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: BLACK_COLOR,
-                        ),
-                      ),
-                    ),
+                    builder: (context, pickImages) => CustomYellowButton(text: '사진추가', onPressed: pickImages),
                   ),
                 ),
               ],

@@ -20,14 +20,14 @@ class _NoteService implements NoteService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<NoteModel> createNote(String token, NoteModel note) async {
+  Future<void> createNote(String token, Map<String, dynamic> noteData) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(note.toJson());
-    final _options = _setStreamType<NoteModel>(
+    _data.addAll(noteData);
+    final _options = _setStreamType<void>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -37,15 +37,7 @@ class _NoteService implements NoteService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late NoteModel _value;
-    try {
-      _value = NoteModel.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
+    await _dio.fetch<void>(_options);
   }
 
   @override
