@@ -59,3 +59,18 @@ final noteDetailProvider = FutureProvider.autoDispose.family<NoteModel, int>((re
   return service.fetchNoteDetail("Bearer $token", noteId);
 });
 
+// ✅ 알림장 삭제 Provider
+final noteDeleteProvider = FutureProvider.family<void, int>((ref, noteId) async {
+  final service = ref.read(noteServiceProvider);
+  final token = await SecureStorage.readToken();
+  if (token == null) {
+    throw Exception("토큰이 존재하지 않습니다.");
+  }
+
+  await service.deleteNotes("Bearer $token", {"data": [noteId]});
+
+  // ✅ 삭제 후 목록 갱신
+  ref.invalidate(noteListProvider);
+});
+
+

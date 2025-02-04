@@ -54,6 +54,62 @@ class _NoteInsertScreenState extends ConsumerState<NoteInsertScreen> {
     });
   }
 
+  /// ✅ 알림장 등록 확인 다이얼로그
+  Future<bool?> _showRegisterConfirmDialog() async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: Colors.white,
+          title: const Text("알림장 등록", style: TextStyle(color: DARK_GREY_COLOR)),
+          content: const Text("알림장을 등록하시겠습니까?", style: TextStyle(color: DARK_GREY_COLOR)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("취소", style: TextStyle(color: Colors.black)),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DARK_GREY_COLOR,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text("확인", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// ✅ 알림장 등록 성공 다이얼로그
+  Future<void> _showRegisterSuccessDialog() async {
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: Colors.white,
+          title: const Text("알림장 등록 완료", style: TextStyle(color: DARK_GREY_COLOR)),
+          content: const Text("알림장이 성공적으로 등록되었습니다.", style: TextStyle(color: DARK_GREY_COLOR)),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DARK_GREY_COLOR,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text("확인", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _openCustomDatePicker(BuildContext context) {
     showModalBottomSheet(
       backgroundColor: Colors.white,
@@ -156,8 +212,13 @@ class _NoteInsertScreenState extends ConsumerState<NoteInsertScreen> {
       "image": _previewImageUrl!,
     };
 
+
+    final confirm = await _showRegisterConfirmDialog();
+
     try {
       await ref.read(noteCreateProvider(requestData).future);
+
+      await _showRegisterSuccessDialog();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("알림장이 성공적으로 등록되었습니다.")),

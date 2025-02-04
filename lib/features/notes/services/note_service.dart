@@ -27,4 +27,11 @@ abstract class NoteService {
       @Header("Authorization") String token,
       @Path("note_id") int noteId,
       );
+
+  // 알림장 삭제 API
+  @DELETE("/notes")
+  Future<void> deleteNotes(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> noteIds, // { "data": [noteId] } 형태로 전송
+      );
 }
