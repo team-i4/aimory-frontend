@@ -221,7 +221,7 @@ class TeacherHomeScreen extends ConsumerWidget {
                                             builder: (context) => PhotoDetailScreen(
                                               photoId: photo.photoId, // ✅ 사진 ID
                                               imageUrl: photo.imageUrl, // ✅ 이미지 URL
-                                              title: photo.childName, // ✅ 아이 이름을 제목으로 설정
+                                              title: photo.childNames.isNotEmpty ? photo.childNames.first : "이름 없음", // ✅ 아이 이름을 제목으로 설정
                                               createdAt: formatDateTime(photo.createdAt), // ✅ 날짜 변환 후 전달
                                               role: 'teacher', // ✅ 교사용 역할 설정
                                             ),
