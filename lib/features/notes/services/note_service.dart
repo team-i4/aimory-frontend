@@ -17,7 +17,7 @@ abstract class NoteService {
 
   // 알림장 전체 조회 API
   @GET("/notes")
-  Future<List<NoteModel>> fetchNotes(
+  Future<dynamic> fetchNotes(
       @Header("Authorization") String token,
       );
 
