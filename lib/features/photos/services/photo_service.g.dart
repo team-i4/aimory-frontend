@@ -45,7 +45,7 @@ class _PhotoService implements PhotoService {
   Future<dynamic> uploadPhotos(String token, List<MultipartFile> files) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'apiToken': token};
+    final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
     _data.files.addAll(files.map((i) => MapEntry('files', i)));
