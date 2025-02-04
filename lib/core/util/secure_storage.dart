@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorage {
@@ -24,9 +26,28 @@ class SecureStorage {
   }
 
   // ✅ JWT Access Token 읽기
+
   static Future<String?> readToken() async {
-    return await _storage.read(key: 'jwt_token');
+    final token = await _storage.read(key: "jwt_token");
+    if (token == null) return null;
+
+    // ✅ 토큰의 만료 시간 확인
+    final payload = token.split('.')[1];
+    final decoded = utf8.decode(base64Url.decode(base64Url.normalize(payload)));
+    final exp = jsonDecode(decoded)["exp"];
+
+    if (exp != null && DateTime.fromMillisecondsSinceEpoch(exp * 1000).isBefore(DateTime.now())) {
+      print("❌ 토큰이 만료됨. 자동 로그아웃.");
+      await deleteAuthData();
+      return null;
+    }
+
+    return token;
   }
+
+  // static Future<String?> readToken() async {
+  //   return await _storage.read(key: 'jwt_token');
+  // }
 
   // ✅ 역할(role) 읽기
   static Future<String?> readUserRole() async {

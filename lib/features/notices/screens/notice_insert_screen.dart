@@ -309,12 +309,21 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
                           ElevatedButton(
                             onPressed: pickImages,
                             style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12.0),
-                                backgroundColor: MAIN_YELLOW,
-                                foregroundColor: BLACK_COLOR),
-                            child: const Text("사진추가"),
+                              elevation: 0,
+                              backgroundColor: MAIN_YELLOW,
+                              foregroundColor: BLACK_COLOR,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                            child: const Text(
+                              "사진추가",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: BLACK_COLOR,
+                              ),
+                            ),
                           ),
                     ),
                   ),

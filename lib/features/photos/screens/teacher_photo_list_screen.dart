@@ -7,15 +7,15 @@ import '../provider/photo_provider.dart';
 
 class TeacherPhotoListScreen extends ConsumerStatefulWidget {
   final String childName;
-  final int childId;
-  final int photoCount; // ✅ 추가해야 함!
+  final int? childId;
+  final int photoCount;
   final List<Map<String, dynamic>> allPhotos;
 
   const TeacherPhotoListScreen({
     Key? key,
     required this.childName,
-    required this.childId,
-    required this.photoCount, // ✅ 추가!
+    this.childId,
+    required this.photoCount,
     required this.allPhotos,
   }) : super(key: key);
 
@@ -38,9 +38,11 @@ class _TeacherPhotoListScreenState extends ConsumerState<TeacherPhotoListScreen>
       if (widget.childId == -1) {
         filteredPhotos = widget.allPhotos; // ✅ 전체 앨범
       } else {
-        filteredPhotos = widget.allPhotos
-            .where((photo) => photo['childId'] == widget.childId)
-            .toList();
+        filteredPhotos = widget.allPhotos.where((photo) {
+          final List<dynamic>? childIds = photo['childIds'];
+          if (childIds == null || childIds.isEmpty) return false;
+          return childIds.contains(widget.childId); // ✅ childIds 리스트 내 포함 여부 확인
+        }).toList();
       }
     });
 
