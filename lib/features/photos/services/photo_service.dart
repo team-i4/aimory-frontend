@@ -5,12 +5,12 @@ import '../models/photo_model.dart';
 
 part 'photo_service.g.dart';
 
-@RestApi(baseUrl: "http://aimory.ap-northeast-2.elasticbeanstalk.com")
+@RestApi(baseUrl: "https://aimory.ap-northeast-2.elasticbeanstalk.com")
 abstract class PhotoService {
   factory PhotoService(Dio dio, {String baseUrl}) = _PhotoService;
 
   @GET("/photos")
-  Future<dynamic> getPhotos(@Header("Authorization") String token);
+  Future<dynamic> getPhotos(@Header("apiToken") String token);
 
   @POST("/photos")
   @MultiPart()
@@ -21,19 +21,19 @@ abstract class PhotoService {
 
   @GET("/photos/child")
   Future<dynamic> getPhotosByChild(
-      @Header("Authorization") String token,
+      @Header("apiToken") String token,
       @Query("childId") int childId,
       );
 
   @DELETE("/photos")
   Future<dynamic> deletePhotos(
-      @Header("Authorization") String token,
+      @Header("apiToken") String token,
       @Body() Map<String, dynamic> requestBody,
       );
 }
 
 // ✅ Dio 인스턴스에서 요청/응답 로그 출력
-final dio = Dio(BaseOptions(baseUrl: "http://aimory.ap-northeast-2.elasticbeanstalk.com"))
+final dio = Dio(BaseOptions(baseUrl: "https://aimory.ap-northeast-2.elasticbeanstalk.com"))
   ..interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) {
       debugPrint("📤 요청 URL: ${options.uri}");

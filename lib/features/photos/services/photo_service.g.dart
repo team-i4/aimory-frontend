@@ -10,7 +10,7 @@ part of 'photo_service.dart';
 
 class _PhotoService implements PhotoService {
   _PhotoService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://aimory.ap-northeast-2.elasticbeanstalk.com';
+    baseUrl ??= 'https://aimory.ap-northeast-2.elasticbeanstalk.com';
   }
 
   final Dio _dio;
@@ -23,7 +23,7 @@ class _PhotoService implements PhotoService {
   Future<dynamic> getPhotos(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{r'apiToken': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<dynamic>(
@@ -42,10 +42,38 @@ class _PhotoService implements PhotoService {
   }
 
   @override
+  Future<dynamic> uploadPhotos(String token, List<MultipartFile> files) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'apiToken': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = FormData();
+    _data.files.addAll(files.map((i) => MapEntry('files', i)));
+    final _options = _setStreamType<dynamic>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/photos',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
   Future<dynamic> getPhotosByChild(String token, int childId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'childId': childId};
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{r'apiToken': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<dynamic>(
@@ -70,7 +98,7 @@ class _PhotoService implements PhotoService {
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{r'apiToken': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(requestBody);
