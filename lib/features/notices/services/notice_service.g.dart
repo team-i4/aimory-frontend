@@ -10,7 +10,7 @@ part of 'notice_service.dart';
 
 class _NoticeService implements NoticeService {
   _NoticeService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://aimory.ap-northeast-2.elasticbeanstalk.com';
+    baseUrl ??= 'https://aimory.ap-northeast-2.elasticbeanstalk.com';
   }
 
   final Dio _dio;
@@ -28,7 +28,7 @@ class _NoticeService implements NoticeService {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{r'apiToken': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
     _data.fields.add(MapEntry('data', noticeJson));
@@ -65,7 +65,7 @@ class _NoticeService implements NoticeService {
   Future<dynamic> getNotices(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{r'apiToken': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<dynamic>(
@@ -87,7 +87,7 @@ class _NoticeService implements NoticeService {
   Future<NoticeModel> getNoticeById(String token, int noticeId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{r'apiToken': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<NoticeModel>(
@@ -118,7 +118,7 @@ class _NoticeService implements NoticeService {
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{r'apiToken': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(requestBody);

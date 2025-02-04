@@ -10,7 +10,7 @@ part of 'note_service.dart';
 
 class _NoteService implements NoteService {
   _NoteService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://aimory.ap-northeast-2.elasticbeanstalk.com';
+    baseUrl ??= 'https://aimory.ap-northeast-2.elasticbeanstalk.com';
   }
 
   final Dio _dio;
@@ -23,7 +23,7 @@ class _NoteService implements NoteService {
   Future<NoteModel> createNote(String token, NoteModel note) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{r'apiToken': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(note.toJson());
@@ -52,7 +52,7 @@ class _NoteService implements NoteService {
   Future<List<NoteModel>> fetchNotes(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{r'apiToken': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<List<NoteModel>>(
@@ -82,7 +82,7 @@ class _NoteService implements NoteService {
   Future<NoteModel> fetchNoteDetail(String token, int noteId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{r'apiToken': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<NoteModel>(
