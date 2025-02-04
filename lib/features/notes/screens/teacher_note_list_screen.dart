@@ -38,11 +38,14 @@ class TeacherNoteListScreen extends ConsumerWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const NoteInsertScreen()),
                       );
+                      if (result == true) {
+                        ref.invalidate(noteListProvider); // ✅ 알림장 추가 후 목록 갱신
+                      }
                     }, // 알림장 추가 버튼 기능
                     label: const Text(
                       "알림장 작성하기",
@@ -80,15 +83,14 @@ class TeacherNoteListScreen extends ConsumerWidget {
                     },
                     child: GestureDetector(
                       onTap: () async {
-                        bool? isDeleted = await Navigator.push(
+                        bool? isUpdated = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => TeacherNoteDetailScreen(noteId: note.id ?? 0),
                           ),
                         );
-
-                        if (isDeleted == true) {
-                          // ref.read(noteListProvider.notifier).fetchNotes();
+                        if (isUpdated == true) {
+                          ref.invalidate(noteListProvider); // ✅ 수정 후 목록 갱신
                         }
                       },
                       child: Container(
