@@ -1,15 +1,15 @@
 class PhotoModel {
   final int photoId;
   final String imageUrl;
-  final int childId;
-  final String childName; // ✅ 원아 이름 (Null 방지)
-  final String createdAt; // ✅ 업로드 날짜
+  final List<int> childIds; // ✅ 여러 childId 처리
+  final List<String> childNames; // ✅ 여러 childName 처리
+  final String createdAt;
 
   PhotoModel({
     required this.photoId,
     required this.imageUrl,
-    required this.childId,
-    required this.childName,
+    required this.childIds,
+    required this.childNames,
     required this.createdAt,
   });
 
@@ -18,9 +18,9 @@ class PhotoModel {
     return PhotoModel(
       photoId: json["photoId"] ?? 0,
       imageUrl: json["imageUrl"] ?? "",
-      childId: json["childId"] ?? 0,
-      childName: json["childName"] ?? "이름 없음", // ✅ null 방지
-      createdAt: json["createdAt"] ?? "날짜 없음", // ✅ null 방지
+      childIds: List<int>.from(json["childIds"] ?? []), // ✅ 여러 ID 처리
+      childNames: List<String>.from(json["childNames"] ?? []), // ✅ 여러 이름 처리
+      createdAt: json["createdAt"] ?? "날짜 없음",
     );
   }
 
@@ -29,8 +29,8 @@ class PhotoModel {
     return {
       "photoId": photoId,
       "imageUrl": imageUrl,
-      "childId": childId,
-      "childName": childName,
+      "childIds": childIds,
+      "childNames": childNames,
       "createdAt": createdAt,
     };
   }
