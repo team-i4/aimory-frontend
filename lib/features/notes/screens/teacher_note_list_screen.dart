@@ -134,7 +134,6 @@ class TeacherNoteListScreen extends ConsumerWidget {
                                 ],
                               ),
                             ),
-                            Icon(Icons.more_vert, size: 16.0,),
                           ],
                         ),
                       ),
