@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +12,27 @@ final dioProvider = Provider<Dio>((ref) {
     baseUrl: "http://aimory.ap-northeast-2.elasticbeanstalk.com",
   ));
   return dio;
+});
+
+
+final photoUploadProvider = FutureProvider.family<bool, File>((ref, file) async {
+  final service = ref.read(photoServiceProvider);
+  final token = await SecureStorage.readToken();
+  if (token == null) {
+    throw Exception("❌ 토큰이 없습니다.");
+  }
+
+  try {
+    final fileData = await MultipartFile.fromFile(file.path, filename: file.path.split('/').last);
+    final response = await service.uploadPhotos("Bearer $token", [fileData]); // ✅ childId 제거
+
+    debugPrint("✅ 사진 업로드 성공");
+    ref.invalidate(photoListProvider); // ✅ 업로드 후 새로고침
+    return true;
+  } catch (e) {
+    debugPrint("❌ 사진 업로드 실패: $e");
+    return false;
+  }
 });
 
 final photoDeleteProvider = FutureProvider.family<bool, List<int>>((ref, photoIds) async {
