@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import '../models/note_model.dart';
@@ -17,20 +18,19 @@ final noteServiceProvider = Provider<NoteService>((ref) {
 });
 
 // 알림장 생성 Provider
-final noteCreateProvider = FutureProvider.autoDispose
-    .family<NoteModel, NoteModel>((ref, note) async {
+final noteListProvider = FutureProvider<List<NoteModel>>((ref) async {
   final service = ref.read(noteServiceProvider);
   final token = await SecureStorage.readToken();
   if (token == null) throw Exception("로그인이 필요합니다.");
-  return service.createNote("Bearer $token", note);
-});
 
-// 알림장 전체 조회 Provider
-final noteListProvider = FutureProvider.autoDispose<List<NoteModel>>((ref) async {
-  final service = ref.read(noteServiceProvider);
-  final token = await SecureStorage.readToken();
-  if (token == null) throw Exception("로그인이 필요합니다.");
-  return service.fetchNotes("Bearer $token");
+  final rawResponse = await service.fetchNotes("Bearer $token");
+
+  if (rawResponse is Map<String, dynamic> && rawResponse.containsKey("notes")) {
+    final List<dynamic> notesJson = rawResponse["notes"];
+    return notesJson.map((json) => NoteModel.fromJson(json as Map<String, dynamic>)).toList();
+  }
+
+  throw Exception("알림장 데이터를 불러올 수 없습니다.");
 });
 
 // 알림장 단일 조회 Provider
