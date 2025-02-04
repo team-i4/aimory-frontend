@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:aimory_app/features/photos/screens/teacher_photo_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/const/colors.dart';
+import '../../../core/widgets/photo_picker.dart';
 import '../models/photo_model.dart';
 import '../provider/photo_provider.dart';
 
@@ -76,16 +79,26 @@ class TeacherAlbumScreen extends ConsumerWidget {
               ref.refresh(photoListProvider); // ✅ 리스트 강제 갱신
             },
           ),
-          TextButton.icon(
-            onPressed: () {}, // ✅ 추후 이미지 업로드 기능 추가
-            icon: const Icon(Icons.add, color: DARK_GREY_COLOR),
-            label: const Text("사진 추가하기", style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14)),
-            style: ElevatedButton.styleFrom(
-              elevation: 0,
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: const BorderSide(color: MID_GREY_COLOR, width: 1),
+          PhotoPicker(
+            onImagePicked: (File? file) async {
+              if (file != null) {
+                final result = await ref.read(photoUploadProvider(file).future);
+                if (result) {
+                  ref.invalidate(photoListProvider); // ✅ 업로드 성공 시 새로고침
+                }
+              }
+            },
+            builder: (context, file) => TextButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.add, color: DARK_GREY_COLOR),
+              label: const Text("사진 추가하기", style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14)),
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: const BorderSide(color: MID_GREY_COLOR, width: 1),
+                ),
               ),
             ),
           ),
