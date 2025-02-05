@@ -38,7 +38,7 @@ dependencies:
 
   http: ^1.2.2          # API 통신
   provider: ^6.1.0      # 상태 관리
-  shared_preferences: ^2.0.15 # 로컬 저장소
+  shared_preferences: ^2.5.1 # 로컬 저장소
   dio: ^5.7.0           # 고급 HTTP 통신
 #  json_serializable: ^6.7.1 # JSON 처리
   flutter_native_splash: ^2.4.4

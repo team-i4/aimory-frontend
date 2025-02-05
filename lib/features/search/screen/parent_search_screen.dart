@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/const/colors.dart';
+import '../providers/search_provider.dart';
 
-class ParentSearchScreen extends StatefulWidget {
-
+class ParentSearchScreen extends ConsumerStatefulWidget {
   @override
   _ParentSearchScreenState createState() => _ParentSearchScreenState();
 }
 
-class _ParentSearchScreenState extends State<ParentSearchScreen> {
+class _ParentSearchScreenState extends ConsumerState<ParentSearchScreen> {
   TextEditingController _searchController = TextEditingController();
-  // String? _resultText = '지아는 12월 7일에 돈가스를 맛있게 먹었습니다.';
   String? _resultText;
+  bool _isLoading = false; // ✅ 로딩 상태 추가
 
-  void _onSearch() {
+  void _onSearch() async {
     setState(() {
-      _resultText = "${_searchController.text}에 대한 정보를 찾았습니다!";
+      _isLoading = true;
+    });
+
+    final response = await ref.read(searchProvider(_searchController.text).future);
+
+    setState(() {
+      _isLoading = false;
+      _resultText = response.content; // ✅ 검색 결과 적용
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: MAIN_YELLOW,
         centerTitle: true,
@@ -35,7 +44,7 @@ class _ParentSearchScreenState extends State<ParentSearchScreen> {
         leading: IconButton(
           icon: const Icon(Icons.keyboard_backspace),
           onPressed: () {
-            Navigator.pop(context, false); // 뒤로가기 시 삭제되지 않음을 반환
+            Navigator.pop(context, false);
           },
         ),
       ),
@@ -48,63 +57,77 @@ class _ParentSearchScreenState extends State<ParentSearchScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 030),
-              Text(
+              const SizedBox(height: 30),
+              const Text(
                 '우리 아이 어린이집 생활\n쉽게 검색하세요.',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 children: [
                   Expanded(
                     child: TextField(
+                      cursorColor: MID_GREY_COLOR,
                       controller: _searchController,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
-                        hintText: '12월 7일 지아가 먹은 식단 알려줘',
+                        hintText: '2025년 12월 7일 지아가 먹은 식단 알려줘',
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: LIGHT_GREY_COLOR, // 테두리 색상
-                            width: 1.0, // 테두리 두께
+                          borderSide: const BorderSide(
+                            color: MID_GREY_COLOR,
+                            width: 1.0,
                           ),
-                          borderRadius: BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: MID_GREY_COLOR, // ✅ 포커스 시 테두리 색상 변경 (보라색)
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                         suffixIcon: IconButton(
                           onPressed: _onSearch,
-                          icon: Icon(Icons.search),
+                          icon: const Icon(Icons.search),
                           color: LIGHT_GREY_COLOR,
                           iconSize: 30,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(width: 8),
-
+                  const SizedBox(width: 8),
                 ],
               ),
+
+              // ✅ 로딩 상태 추가
+              if (_isLoading) ...[
+                const SizedBox(height: 20),
+                const Center(child: CircularProgressIndicator()),
+              ],
+
               if (_resultText != null) ...[
-                SizedBox(height: 20),
-                Text(
+                const SizedBox(height: 20),
+                const Text(
                   '답변',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: MAIN_LIGHT_YELLOW,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Text(
                     _resultText!,
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ],
@@ -112,7 +135,6 @@ class _ParentSearchScreenState extends State<ParentSearchScreen> {
           ),
         ),
       ),
-
     );
   }
 }
