@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/const/colors.dart';
 import '../../auth/screens/center_info_update_screen.dart';
+import '../../search/screen/parent_search_screen.dart';
 
 class TeacherHomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const TeacherHomeAppBar({Key? key}) : super(key: key);
@@ -39,7 +40,12 @@ class TeacherHomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () {}, // 알림 버튼 기능
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ParentSearchScreen()),
+                        );
+                      }, // 알림 버튼 기능
                       icon: const Icon(
                         Icons.search_outlined,
                         size: 30,
