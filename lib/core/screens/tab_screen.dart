@@ -111,11 +111,11 @@ class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMix
             selectedItemColor: BLACK_COLOR,
             unselectedItemColor: LIGHT_GREY_COLOR,
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "홈"),
-              BottomNavigationBarItem(icon: Icon(Icons.notifications), label: "공지사항"),
-              BottomNavigationBarItem(icon: Icon(Icons.note), label: "알림장"),
-              BottomNavigationBarItem(icon: Icon(Icons.photo_album), label: "사진첩"),
-              BottomNavigationBarItem(icon: Icon(Icons.person), label: "내정보"),
+              BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "홈"),
+              BottomNavigationBarItem(icon: Icon(Icons.notifications_outlined), label: "공지사항"),
+              BottomNavigationBarItem(icon: Icon(Icons.note_outlined), label: "알림장"),
+              BottomNavigationBarItem(icon: Icon(Icons.photo_album_outlined), label: "사진첩"),
+              BottomNavigationBarItem(icon: Icon(Icons.person_outlined), label: "내정보"),
             ],
           ),
         );

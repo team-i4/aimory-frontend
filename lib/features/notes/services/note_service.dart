@@ -10,14 +10,14 @@ abstract class NoteService {
 
   // 알림장 생성 API
   @POST("/notes")
-  Future<NoteModel> createNote(
+  Future<void> createNote(
       @Header("Authorization") String token,
-      @Body() NoteModel note, // JSON 변환 없이 NoteModel 객체를 바로 사용 가능!
+      @Body() Map<String, dynamic> noteData, // ✅ NoteModel 대신 Map<String, dynamic> 사용
       );
 
   // 알림장 전체 조회 API
   @GET("/notes")
-  Future<List<NoteModel>> fetchNotes(
+  Future<dynamic> fetchNotes(
       @Header("Authorization") String token,
       );
 
@@ -26,5 +26,12 @@ abstract class NoteService {
   Future<NoteModel> fetchNoteDetail(
       @Header("Authorization") String token,
       @Path("note_id") int noteId,
+      );
+
+  // 알림장 삭제 API
+  @DELETE("/notes")
+  Future<void> deleteNotes(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> noteIds, // { "data": [noteId] } 형태로 전송
       );
 }

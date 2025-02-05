@@ -1,12 +1,18 @@
+import 'package:aimory_app/features/auth/providers/teacher_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/const/colors.dart';
 import '../../auth/screens/center_info_update_screen.dart';
+import '../../search/screen/parent_search_screen.dart';
 
-class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+class TeacherHomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const TeacherHomeAppBar({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final teacherAsync = ref.watch(teacherInfoProvider); // 선생님 API 조회
+
+
     return AppBar(
       backgroundColor: MAIN_YELLOW,
       elevation: 0,
@@ -34,7 +40,12 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () {}, // 알림 버튼 기능
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ParentSearchScreen()),
+                        );
+                      }, // 알림 버튼 기능
                       icon: const Icon(
                         Icons.search_outlined,
                         size: 30,
@@ -56,7 +67,7 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             const SizedBox(height: 50),
             // 날짜, 이름, 반 정보
             Text(
-              "05월26일 금요일",
+              "02월 07일 금요일",
               style: TextStyle(
                 fontSize: 14,
                 color: MAIN_DARK_GREY,
@@ -70,13 +81,17 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "김미미 교사",
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: DARK_GREY_COLOR,
-                      ),
+                    teacherAsync.when(
+                        data: (teacher) => Text(
+                          "${teacher.name} 교사",
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: DARK_GREY_COLOR,
+                          ),
+                        ),
+                        loading: () => Center(child: CircularProgressIndicator()),
+                        error: (err, stack) => Center(child: Text("데이터를 불러오지 못했습니다."))
                     ),
                     Text(
                       "해바라기 반",
@@ -115,9 +130,15 @@ class TeacherHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ],
                 ),
                 // 교사 이미지
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: AssetImage('assets/img/teacher01.jpg'), // 교사 이미지 경로
+                teacherAsync.when(
+                    data: (teacher) => CircleAvatar(
+                      radius: 50,
+                      backgroundImage: teacher.profileImageUrl != null
+                          ? NetworkImage(teacher.profileImageUrl!)
+                          : AssetImage("assets/img/default_profile.png") as ImageProvider,
+                    ),
+                    loading: () => Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => Center(child: Text("데이터를 불러오지 못했습니다."))
                 ),
               ],
             ),

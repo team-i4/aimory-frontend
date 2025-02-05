@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:aimory_app/core/util/secure_storage.dart';
+import 'package:aimory_app/core/widgets/custom_yellow_button.dart';
 import 'package:aimory_app/features/notices/models/notice_model.dart';
 import 'package:aimory_app/features/notices/services/notice_service.dart';
 import 'package:flutter/material.dart';
@@ -169,7 +170,10 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
-              style: ElevatedButton.styleFrom(backgroundColor: DARK_GREY_COLOR),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DARK_GREY_COLOR,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
               child: const Text("확인", style: TextStyle(color: Colors.white)),
             ),
           ],
@@ -305,17 +309,7 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
                               pickedFiles.map((file) => File(file.path)));
                         });
                       },
-                      builder: (context, pickImages) =>
-                          ElevatedButton(
-                            onPressed: pickImages,
-                            style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12.0),
-                                backgroundColor: MAIN_YELLOW,
-                                foregroundColor: BLACK_COLOR),
-                            child: const Text("사진추가"),
-                          ),
+                      builder: (context, pickImages) => CustomYellowButton(text: '사진추가', onPressed: pickImages),
                     ),
                   ),
                 ],

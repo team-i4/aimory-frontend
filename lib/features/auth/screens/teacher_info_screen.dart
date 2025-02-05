@@ -1,14 +1,18 @@
 import 'package:aimory_app/core/const/colors.dart';
+import 'package:aimory_app/features/auth/providers/teacher_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'center_info_insert_screen.dart';
 import 'info_insert_screen.dart';
 
-class TeacherInfoScreen extends StatelessWidget {
+class TeacherInfoScreen extends ConsumerWidget {
   const TeacherInfoScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final teacherAsync = ref.watch(teacherInfoProvider); // 선생님 조회 API
+
     return Scaffold(
       backgroundColor: MAIN_LIGHT_YELLOW, // 배경색
       body: SingleChildScrollView(
@@ -18,19 +22,25 @@ class TeacherInfoScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // 상단 사용자 정보
-              Column(
-                children: [
-                  const SizedBox(height: 16),
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.grey,
+              teacherAsync.when(
+                data: (teacher) => Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundImage: teacher.profileImageUrl != null
+                          ? NetworkImage(teacher.profileImageUrl!)
+                          : AssetImage("assets/img/default_profile.png") as ImageProvider,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        teacher.name,
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "이은정 님",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ],
+                loading: () => Center(child: CircularProgressIndicator()),
+                error: (err, stack) => Center(child: Text("데이터를 불러오지 못했습니다."))
               ),
               const SizedBox(height: 32),
 
@@ -149,32 +159,36 @@ class TeacherInfoScreen extends StatelessWidget {
               SizedBox(height: 30.0,),
 
               // 사용자 정보 섹션
-              Container(
-                margin: EdgeInsets.zero,
-                padding: EdgeInsets.zero,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: BORDER_GREY_COLOR, width: 1),
-                ),
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "이름  이은정",
-                        style: TextStyle(fontSize: 16),
+              teacherAsync.when(
+                  data: (teacher) => Container(
+                    margin: EdgeInsets.zero,
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: BORDER_GREY_COLOR, width: 1),
+                    ),
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "이름  ${teacher.name}",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "이메일  ${teacher.email}",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        "이메일  gmail@gmail.com",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  loading: () => Center(child: CircularProgressIndicator()),
+                  error: (err, stack) => Center(child: Text("데이터를 불러오지 못했습니다."))
               ),
               const SizedBox(height: 32),
 

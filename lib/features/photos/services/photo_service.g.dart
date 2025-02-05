@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'note_service.dart';
+part of 'photo_service.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,8 +8,8 @@ part of 'note_service.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
 
-class _NoteService implements NoteService {
-  _NoteService(this._dio, {this.baseUrl, this.errorLogger}) {
+class _PhotoService implements PhotoService {
+  _PhotoService(this._dio, {this.baseUrl, this.errorLogger}) {
     baseUrl ??= 'http://aimory.ap-northeast-2.elasticbeanstalk.com';
   }
 
@@ -20,28 +20,7 @@ class _NoteService implements NoteService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<void> createNote(String token, Map<String, dynamic> noteData) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': token};
-    _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(noteData);
-    final _options = _setStreamType<void>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/notes',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    await _dio.fetch<void>(_options);
-  }
-
-  @override
-  Future<dynamic> fetchNotes(String token) async {
+  Future<dynamic> getPhotos(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
@@ -51,7 +30,7 @@ class _NoteService implements NoteService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/notes',
+            '/photos',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -63,52 +42,79 @@ class _NoteService implements NoteService {
   }
 
   @override
-  Future<NoteModel> fetchNoteDetail(String token, int noteId) async {
+  Future<dynamic> uploadPhotos(String token, List<MultipartFile> files) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<NoteModel>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
+    final _data = FormData();
+    _data.files.addAll(files.map((i) => MapEntry('files', i)));
+    final _options = _setStreamType<dynamic>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
           .compose(
             _dio.options,
-            '/notes/${noteId}',
+            '/photos',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late NoteModel _value;
-    try {
-      _value = NoteModel.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
     return _value;
   }
 
   @override
-  Future<void> deleteNotes(String token, Map<String, dynamic> noteIds) async {
+  Future<dynamic> getPhotosByChild(String token, int childId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'childId': childId};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/photos/child',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> deletePhotos(
+    String token,
+    Map<String, dynamic> requestBody,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(noteIds);
-    final _options = _setStreamType<void>(
+    _data.addAll(requestBody);
+    final _options = _setStreamType<dynamic>(
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/notes',
+            '/photos',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

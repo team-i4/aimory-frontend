@@ -8,6 +8,36 @@ import '../models/note_model.dart';
 import '../provider/note_provider.dart';
 
 class TeacherNoteListScreen extends ConsumerWidget {
+
+  /// ✅ 알림장 삭제 확인 다이얼로그
+  Future<bool?> _showDeleteConfirmDialog(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: Colors.white,
+          title: const Text("알림장 삭제", style: TextStyle(color: DARK_GREY_COLOR)),
+          content: const Text("해당 알림장을 삭제하시겠습니까?", style: TextStyle(color: DARK_GREY_COLOR)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("취소", style: TextStyle(color: Colors.black)),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DARK_GREY_COLOR,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text("삭제", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final noteListAsync = ref.watch(noteListProvider); // ✅ 알림장 전체 조회 API 호출
@@ -38,11 +68,14 @@ class TeacherNoteListScreen extends ConsumerWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const NoteInsertScreen()),
                       );
+                      if (result == true) {
+                        ref.invalidate(noteListProvider); // ✅ 알림장 추가 후 목록 갱신
+                      }
                     }, // 알림장 추가 버튼 기능
                     label: const Text(
                       "알림장 작성하기",
@@ -74,21 +107,31 @@ class TeacherNoteListScreen extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   NoteModel note = notes[index];
                   return SwipeToDelete(
-                    onDelete: () {
-                      // ✅ 삭제 기능 추가 가능 (현재는 UI에서만 제거)
-                      // ref.read(noteListProvider.notifier).fetchNotes();
+                    onDelete: () async {
+                      final confirm = await _showDeleteConfirmDialog(context);
+                      if (confirm != true) return;
+
+                      try {
+                        await ref.read(noteDeleteProvider(note.id!).future);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("알림장이 삭제되었습니다.")),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("삭제 실패: $e")),
+                        );
+                      }
                     },
                     child: GestureDetector(
                       onTap: () async {
-                        bool? isDeleted = await Navigator.push(
+                        bool? isUpdated = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => TeacherNoteDetailScreen(noteId: note.id ?? 0),
                           ),
                         );
-
-                        if (isDeleted == true) {
-                          // ref.read(noteListProvider.notifier).fetchNotes();
+                        if (isUpdated == true) {
+                          ref.invalidate(noteListProvider); // ✅ 수정 후 목록 갱신
                         }
                       },
                       child: Container(
@@ -132,7 +175,6 @@ class TeacherNoteListScreen extends ConsumerWidget {
                                 ],
                               ),
                             ),
-                            Icon(Icons.more_vert, size: 16.0,),
                           ],
                         ),
                       ),
