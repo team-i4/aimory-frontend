@@ -79,8 +79,6 @@ class PhotoDetailScreen extends ConsumerWidget { // ✅ ConsumerWidget으로 변
 
                       // ✅ 사진 목록을 강제로 새로고침
                       ref.invalidate(photoListProvider);
-                      ref.refresh(photoListProvider);
-
                       Navigator.pop(context);
                     } else {
                       debugPrint("❌ 사진 삭제 실패");

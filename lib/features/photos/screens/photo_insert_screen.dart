@@ -84,7 +84,11 @@ class _PhotoInsertScreenState extends ConsumerState<PhotoInsertScreen> {
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
-              style: ElevatedButton.styleFrom(backgroundColor: DARK_GREY_COLOR),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DARK_GREY_COLOR,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
               child: const Text("확인", style: TextStyle(color: Colors.white)),
             ),
           ],
@@ -103,62 +107,65 @@ class _PhotoInsertScreenState extends ConsumerState<PhotoInsertScreen> {
         leading: IconButton(icon: const Icon(Icons.keyboard_backspace),
             onPressed: () => Navigator.pop(context)),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: MultiImagePicker(
-                    onImagesPicked: (pickedFiles) {
-                      setState(() {
-                        _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
-                      });
-                    },
-                    builder: (context, pickImages) => CustomYellowButton(text: '사진추가', onPressed: pickImages),
+      body: SingleChildScrollView( // ✅ 스크롤 가능하도록 추가
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: MultiImagePicker(
+                      onImagesPicked: (pickedFiles) {
+                        setState(() {
+                          _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
+                        });
+                      },
+                      builder: (context, pickImages) => CustomYellowButton(text: '사진추가', onPressed: pickImages),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (_selectedImages.isNotEmpty)
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: _selectedImages.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  File image = entry.value;
-                  return Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.file(image, width: 100, height: 100, fit: BoxFit.cover),
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: () => _removeImage(index),
-                          child: const CircleAvatar(
-                            radius: 10,
-                            backgroundColor: MAIN_YELLOW,
-                            child: Icon(Icons.close, color: MAIN_DARK_GREY, size: 14),
+                ],
+              ),
+              const SizedBox(height: 16),
+              if (_selectedImages.isNotEmpty)
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: _selectedImages.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    File image = entry.value;
+                    return Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.file(image, width: 100, height: 100, fit: BoxFit.cover),
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: () => _removeImage(index),
+                            child: const CircleAvatar(
+                              radius: 10,
+                              backgroundColor: MAIN_YELLOW,
+                              child: Icon(Icons.close, color: MAIN_DARK_GREY, size: 14),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            const SizedBox(height: 16),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              const SizedBox(height: 16),
 
-            CustomButton(
-              text: "등록하기",
-              onPressed: _uploadPhotos,
-            ),
-          ],
+              CustomButton(
+                text: "등록하기",
+                onPressed: _uploadPhotos,
+              ),
+              const SizedBox(height: 16), // ✅ 마지막 여백 추가하여 스크롤 문제 해결
+            ],
+          ),
         ),
       ),
     );
