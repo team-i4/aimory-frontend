@@ -15,7 +15,7 @@ class TeacherNoteListScreen extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           backgroundColor: Colors.white,
           title: const Text("알림장 삭제", style: TextStyle(color: DARK_GREY_COLOR)),
           content: const Text("해당 알림장을 삭제하시겠습니까?", style: TextStyle(color: DARK_GREY_COLOR)),
@@ -28,7 +28,8 @@ class TeacherNoteListScreen extends ConsumerWidget {
               onPressed: () => Navigator.pop(context, true),
               style: ElevatedButton.styleFrom(
                 backgroundColor: DARK_GREY_COLOR,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               child: const Text("삭제", style: TextStyle(color: Colors.white)),
             ),

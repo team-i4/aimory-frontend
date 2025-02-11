@@ -106,16 +106,23 @@ class TeacherNoticeListScreen extends ConsumerWidget {
                         bool? confirmDelete = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text("공지사항 삭제"),
-                            content: const Text("정말로 삭제하시겠습니까?"),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                            backgroundColor: Colors.white,
+                            title: const Text("공지사항 삭제", style: TextStyle(color: DARK_GREY_COLOR)),
+                            content: const Text("정말로 삭제하시겠습니까?", style: TextStyle(color: DARK_GREY_COLOR)),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context, false),
-                                child: const Text("취소"),
+                                child: const Text("취소", style: TextStyle(color: Colors.black)),
                               ),
-                              TextButton(
+                              ElevatedButton(
                                 onPressed: () => Navigator.pop(context, true),
-                                child: const Text("삭제"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: DARK_GREY_COLOR,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                                child: const Text("삭제", style: TextStyle(color: Colors.white)),
                               ),
                             ],
                           ),

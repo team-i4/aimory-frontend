@@ -32,6 +32,12 @@ class _TeacherPhotoListScreenState extends ConsumerState<TeacherPhotoListScreen>
     _filterPhotos();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _filterPhotos(); // ✅ 화면이 다시 그려질 때 필터링된 데이터를 업데이트
+  }
+
   /// ✅ 특정 원아의 사진만 필터링하는 함수
   void _filterPhotos() {
     setState(() {
@@ -115,8 +121,8 @@ class _TeacherPhotoListScreenState extends ConsumerState<TeacherPhotoListScreen>
 
                       if (result == true) {
                         // ✅ 삭제 후 목록 업데이트
-                        _filterPhotos();
                         ref.invalidate(photoListProvider); // ✅ Riverpod 데이터 갱신
+                        _filterPhotos(); // ✅ UI 리스트 갱신
                       }
                     },
                     child: Container(
