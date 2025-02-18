@@ -1,8 +1,9 @@
 
 ![ReadmeIntro](https://github.com/user-attachments/assets/3960d9f0-f0db-454e-862e-dd9ebf0242cc)
 # 📱 프로젝트명 - 아이모리 어린이집 업무 자동화 서비스 앱
-서비스 시연 영상 : https://drive.google.com/file/d/1KhTtFkvpSvPPk7qbjWElONgx0cxTZ0VN/view?usp=sharing
-기간 : 2024.12.16 ~ 2025.2.7 (8주)
+- 서비스 시연 영상 : https://drive.google.com/file/d/1KhTtFkvpSvPPk7qbjWElONgx0cxTZ0VN/view?usp=sharing
+- 기간 : 2024.12.16 ~ 2025.2.7 (8주)
+- 팀원 : 박선영(FE), 문수현(BE), 성보미(BE), 신승훈(BE)
    
 
 ## 📌 프로젝트 소개
