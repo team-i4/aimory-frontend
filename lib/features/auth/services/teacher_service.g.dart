@@ -47,6 +47,64 @@ class _TeacherService implements TeacherService {
     return _value;
   }
 
+  @override
+  Future<TeacherModel> updateTeacherInfo(
+    String token,
+    File? image,
+    int classroomId,
+    String? oldPassword,
+    String? newPassword,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = FormData();
+    if (image != null) {
+      _data.files.add(
+        MapEntry(
+          'image',
+          MultipartFile.fromFileSync(
+            image.path,
+            filename: image.path.split(Platform.pathSeparator).last,
+          ),
+        ),
+      );
+    }
+    _data.fields.add(MapEntry('classroomId', classroomId.toString()));
+    if (oldPassword != null) {
+      _data.fields.add(MapEntry('oldPassword', oldPassword));
+    }
+    if (newPassword != null) {
+      _data.fields.add(MapEntry('newPassword', newPassword));
+    }
+    final _options = _setStreamType<TeacherModel>(
+      Options(
+        method: 'PUT',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            '/teacher',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late TeacherModel _value;
+    try {
+      _value = TeacherModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

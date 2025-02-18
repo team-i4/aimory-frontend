@@ -41,3 +41,19 @@ final teacherInfoProvider = FutureProvider<TeacherModel>((ref) async {
   throw Exception("API 요청 중 오류가 발생했습니다.");
 }
 });
+
+
+// 선생님 정보 업데이트 Provider
+final teacherUpdateProvider = FutureProvider.family<TeacherModel, Map<String, dynamic>>((ref, requestData) async {
+  final service = ref.read(teacherServiceProvider);
+  final token = await SecureStorage.readToken();
+  if (token == null) throw Exception("로그인이 필요합니다.");
+
+  return service.updateTeacherInfo(
+    "Bearer $token",
+    requestData["image"],
+    requestData["classroomId"],
+    requestData["oldPassword"],
+    requestData["newPassword"],
+  );
+});
