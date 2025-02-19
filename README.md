@@ -16,10 +16,10 @@ AI와 Memory를 결합한 이름을 가집니다.
 
 
 ## 🎯 주요 기능
-✔ **REST API 연동**   
-✔ **JWT 로그인**   
-✔ **갤러리를 활용한 사진첩 기능**  
-✔ **OpenAI ChatGPT API 연동**  
+✔ Dio` 인스턴스를 설정하여 API 요청을 처리하고, `Retrofit` 인터페이스를 통해 API 엔드포인트를 정의한 뒤, 이를 활용하는 `Service`를 생성하며, `Riverpod Provider`로 API 서비스를 관리하여 재사용성을 높이고, UI에서는 `ConsumerWidget`을 통해 API 데이터를 호출하고 활용할 수 있도록 구성
+✔ `json_serializable` 패키지를 사용하여 JSON 데이터를 직렬화(Serialize)하거나 역직렬화(Deserialize)하여 API 연동
+✔ `flutter_secure_storage`를 활용하여 JWT 토큰을 안전하게 저장하고, 토큰 만료 시 자동 재로그인 기능을 구현하여 보안성과 사용자 편의성을 강화
+✔ 프로젝트 전역에서 쓰는 버튼, 갤러리 이미지 선택 기능 등 컴포넌트화
 
 
 
