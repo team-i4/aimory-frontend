@@ -135,12 +135,12 @@ class TeacherInfoScreen extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(Icons.call_sharp, size: 25.0,),
+                          Icon(Icons.logout_sharp, size: 25.0,),
                           SizedBox(height: 10.0,),
                           SizedBox(
                             width: 80.0, // 버튼의 고정 너비 설정
                             child: Text(
-                              '고객센터', // 예시 텍스트
+                              '로그아웃', // 예시 텍스트
                               textAlign: TextAlign.center, // 텍스트 가운데 정렬
                               style: TextStyle(fontSize: 12, color: BLACK_COLOR,),
                               maxLines: 2, // 최대 줄 수 설정
