@@ -1,8 +1,10 @@
 import 'package:aimory_app/core/const/colors.dart';
 import 'package:aimory_app/features/auth/providers/teacher_provider.dart';
+import 'package:aimory_app/features/auth/screens/signin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/util/secure_storage.dart';
 import 'center_info_insert_screen.dart';
 import 'info_insert_screen.dart';
 
@@ -129,7 +131,14 @@ class TeacherInfoScreen extends ConsumerWidget {
                       color: MID_GREY_COLOR,
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () async {
+                        await SecureStorage.deleteAuthData(); // 인증 정보 삭제
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SignInScreen()), // 로그인 화면으로 이동
+                              (route) => false, // 이전 화면 스택 제거
+                        );
+                      },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
