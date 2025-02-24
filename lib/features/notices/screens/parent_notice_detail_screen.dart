@@ -38,6 +38,7 @@ class ParentNoticeDetailScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(notice.date ?? "날짜 없음", style: const TextStyle(fontSize: 16, color: LIGHT_GREY_COLOR)),
+
                 ],
               ),
               const SizedBox(height: 16),
