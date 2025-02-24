@@ -55,14 +55,15 @@ class TeacherNoticeDetailScreen extends ConsumerWidget {
 
                         final result = await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const NoticeInsertScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => NoticeInsertScreen(notice: notice), // ✅ 기존 데이터 전달
+                          ),
                         );
 
                         if (result == true) {
                           ref.invalidate(noticeListProvider); // ✅ 공지사항 목록 새로고침
                         }
                       },
-                      icon: const Icon(Icons.add, color: DARK_GREY_COLOR),
                       label: const Text(
                         "수정하기",
                         style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14),

@@ -15,11 +15,14 @@ import '../../../core/widgets/custom_input_decoration.dart';
 import '../../../core/widgets/multi_image_picker.dart';
 import 'package:dio/dio.dart';
 
-import '../../auth/providers/auth_provider.dart';
-import '../mock/notice_mock_interceptor.dart';
+// import '../../auth/providers/auth_provider.dart';
+// import '../mock/notice_mock_interceptor.dart';
+import '../provider/notice_provider.dart' as provider;
+import '../services/notice_service.dart' as service;
 
 class NoticeInsertScreen extends ConsumerStatefulWidget {
-  const NoticeInsertScreen({Key? key}) : super(key: key);
+  final NoticeModel? notice; // 수정 시 기존 데이터를 받기 위한
+  const NoticeInsertScreen({Key? key, this.notice}) : super(key: key);
 
   @override
   ConsumerState<NoticeInsertScreen> createState() => _NoticeInsertScreenState();
@@ -31,6 +34,18 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
   final TextEditingController _contentController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   List<File> _selectedImages = [];
+  int? _noticeId;
+
+  @override void initState() {
+    super.initState();
+    if(widget.notice != null) {
+      _noticeId = widget.notice!.id;
+      _titleController.text = widget.notice!.title;
+      _contentController.text = widget.notice!.content;
+      _dateController.text = widget.notice!.date ?? "";
+
+    }
+  }
 
   @override
   void dispose() {
@@ -106,6 +121,53 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
     );
   }
 
+  /// ✅ 공지사항 수정 함수
+  Future<bool> _updateNotice(NoticeService noticeService) async {
+    if (_noticeId == null) return false;
+
+    String title = _titleController.text.trim();
+    String content = _contentController.text.trim();
+    String date = _dateController.text.trim();
+    String? token = await SecureStorage.readToken();
+
+    if (token == null || title.isEmpty || content.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("필수 항목을 입력하세요.")));
+      return false;
+    }
+
+    final noticeData = {
+      "title": title,
+      "content": content,
+      "date": date.isNotEmpty ? date : null,
+    };
+
+    try {
+      await noticeService.updateNotice("Bearer $token", _noticeId!, noticeData);
+      await _showSuccessDialog("공지사항이 수정되었습니다.");
+      return true;
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("공지사항 수정 실패: $e")));
+      return false;
+    }
+  }
+
+  /// 🔹 기존의 _createNotice()를 _updateNotice()와 함께 사용하도록 변경
+  Future<void> _onSubmit() async {
+    final noticeService = ref.read(provider.noticeServiceProvider);
+
+    bool isSuccess;
+    if (_noticeId != null) {
+      isSuccess = await _updateNotice(noticeService); // 🔹 수정하기
+    } else {
+      isSuccess = await _createNotice(noticeService); // 🔹 새로 생성
+    }
+
+    if (isSuccess) {
+      ref.invalidate(noticeListProvider); // ✅ 공지사항 목록 새로고침
+      Navigator.pop(context, true);
+    }
+  }
+
   /// ✅ 공지사항 생성 함수
   Future<bool> _createNotice(NoticeService noticeService) async {
     String title = _titleController.text.trim();
@@ -143,7 +205,7 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
 
       await noticeService.createNotice("Bearer $token", noticeJson, multipartImages);
 
-      await _showSuccessDialog();
+      await _showSuccessDialog("공지사항 등록 성공하였습니다.");
       return true; // ✅ 성공 시 true 반환
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -183,7 +245,7 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
   }
 
   /// 공지사항 등록 성공 다이얼로그
-  Future<void> _showSuccessDialog() async {
+  Future<void> _showSuccessDialog(String s) async {
     await showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -212,7 +274,7 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dio = ref.watch(dioProvider);
+    final dio = ref.watch(provider.dioProvider);
     final _noticeService = NoticeService(dio);
 
     return Scaffold(
@@ -220,7 +282,7 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
       appBar: AppBar(
         backgroundColor: MAIN_YELLOW,
         centerTitle: true,
-        title: const Text("공지사항",
+        title: Text(_noticeId == null ? "공지사항 등록" : "공지사항 수정",
             style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
         leading: IconButton(icon: const Icon(Icons.keyboard_backspace),
             onPressed: () => Navigator.pop(context)),
@@ -316,9 +378,9 @@ class _NoticeInsertScreenState extends ConsumerState<NoticeInsertScreen> {
               ),
               const SizedBox(height: 16),
               CustomButton(
-                text: "등록하기",
+                text: _noticeId == null ? "등록하기" : "수정하기",
                 onPressed: () async {
-                  final dio = ref.read(dioProvider);
+                  ref.invalidate(provider.noticeListProvider); // ✅ provider에서 불러오기
                   final noticeService = NoticeService(dio); // ✅ NoticeService 인스턴스 생성
 
                   bool isSuccess = await _createNotice(noticeService);
