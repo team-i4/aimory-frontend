@@ -35,6 +35,20 @@ final createNoticeProvider = FutureProvider.family<void, Map<String, dynamic>>((
   ref.invalidate(noticeListProvider);
 });
 
+/// ✅ 공지사항 수정 Provider 추가
+final updateNoticeProvider = FutureProvider.family<void, Map<String, dynamic>>((ref, requestData) async {
+  final service = ref.read(noticeServiceProvider);
+  final token = await SecureStorage.readToken();
+  if (token == null) {
+    throw Exception("토큰이 존재하지 않습니다.");
+  }
+
+  int noticeId = requestData["notice_id"]; // 🔹 수정할 공지사항 ID
+  await service.updateNotice("Bearer $token", noticeId, requestData["data"]);
+
+  ref.invalidate(noticeListProvider); // ✅ 공지사항 목록 새로고침
+});
+
 final noticeServiceProvider = Provider<NoticeService>((ref) {
   final dio = ref.read(dioProvider);
   return NoticeService(dio);
