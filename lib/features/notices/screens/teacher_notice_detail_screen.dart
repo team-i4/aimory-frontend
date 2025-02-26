@@ -1,6 +1,8 @@
+import 'package:aimory_app/features/notices/screens/notice_update_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/const/colors.dart';
+import '../../../core/util/secure_storage.dart';
 import '../models/notice_model.dart';
 import '../provider/notice_provider.dart';
 
@@ -38,7 +40,46 @@ class TeacherNoticeDetailScreen extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(notice.date ?? "날짜 없음", style: const TextStyle(fontSize: 16, color: LIGHT_GREY_COLOR)),
+                    Text(
+                        notice.date ?? "날짜 없음",
+                        style: const TextStyle(
+                            fontSize: 16,
+                            color: LIGHT_GREY_COLOR
+                        )
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        String? token = await SecureStorage.readToken();
+                        if (token == null || token.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("🚨 로그인이 필요합니다.")),
+                          );
+                          return;
+                        }
+
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const NoticeUpdateScreen()),
+                        );
+
+                        if (result == true) {
+                          ref.invalidate(noticeListProvider); // ✅ 공지사항 목록 새로고침
+                        }
+                      },
+                      icon: const Icon(Icons.add, color: DARK_GREY_COLOR),
+                      label: const Text(
+                        "수정하기",
+                        style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: const BorderSide(color: MID_GREY_COLOR, width: 1),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
