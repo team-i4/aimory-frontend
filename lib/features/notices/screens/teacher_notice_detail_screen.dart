@@ -57,9 +57,12 @@ class TeacherNoticeDetailScreen extends ConsumerWidget {
                           return;
                         }
 
+                        // ✅ 현재 notice 데이터를 updateScreen으로 전달
                         final result = await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const NoticeUpdateScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => NoticeUpdateScreen(notice: notice), // 📌 데이터를 전달
+                          ),
                         );
 
                         if (result == true) {

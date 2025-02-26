@@ -5,7 +5,6 @@ import 'package:aimory_app/core/const/colors.dart';
 import 'package:aimory_app/core/util/secure_storage.dart';
 import 'package:aimory_app/core/widgets/custom_yellow_button.dart';
 import 'package:aimory_app/features/notices/models/notice_model.dart';
-import 'package:aimory_app/features/notices/services/notice_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,8 +17,12 @@ import 'package:dio/dio.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../mock/notice_mock_interceptor.dart';
 
+import '../provider/notice_provider.dart' as provider;
+import '../services/notice_service.dart' as service;
+
 class NoticeUpdateScreen extends ConsumerStatefulWidget {
-  const NoticeUpdateScreen({Key? key}) : super(key: key);
+  final NoticeModel? notice;
+  const NoticeUpdateScreen({Key? key, this.notice}) : super(key: key);
 
   @override
   ConsumerState<NoticeUpdateScreen> createState() => _NoticeUpdateScreenState();
@@ -30,7 +33,18 @@ class _NoticeUpdateScreenState extends ConsumerState<NoticeUpdateScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  List<File> _selectedImages = [];
+  int? _noticeId;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.notice != null) {
+      _noticeId = widget.notice!.id;
+      _titleController.text = widget.notice!.title;
+      _contentController.text = widget.notice!.content;
+      _dateController.text = widget.notice!.date ?? "";
+    }
+  }
 
   @override
   void dispose() {
@@ -38,20 +52,6 @@ class _NoticeUpdateScreenState extends ConsumerState<NoticeUpdateScreen> {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
-  }
-
-  void _removeImage(int index) {
-    setState(() {
-      _selectedImages.removeAt(index);
-    });
-  }
-
-  Future<List<MultipartFile>> _convertFilesToMultipart(List<File> files) async {
-    return Future.wait(files.map((file) async {
-      return await MultipartFile.fromFile(file.path, filename: file.path
-          .split('/')
-          .last);
-    }));
   }
 
   void _openCustomDatePicker(BuildContext context) {
@@ -106,49 +106,55 @@ class _NoticeUpdateScreenState extends ConsumerState<NoticeUpdateScreen> {
     );
   }
 
-  /// ✅ 공지사항 생성 함수
-  Future<bool> _createNotice(NoticeService noticeService) async {
+  // Future<void> _onUpdatePressed() async {
+  //
+  //   bool? isConfirmed = await _showConfirmDialog();
+  //   if (isConfirmed == true) {
+  //     bool isSuccess = await _updateNotice(_noticeService);
+  //     if (isSuccess) {
+  //       await _showSuccessDialog();
+  //     }
+  //   }
+  // }
+
+  /// ✅ 공지사항 수정 함수
+  Future<bool> _updateNotice(service.NoticeService noticeService) async {
     String title = _titleController.text.trim();
     String content = _contentController.text.trim();
     String? date = _dateController.text.trim().isEmpty ? null : _dateController.text.trim();
     String? token = await SecureStorage.readToken();
-    int? centerId = await SecureStorage.readCenterId();
-    String? role = await SecureStorage.readUserRole();
 
-    if (token == null || token.isEmpty || centerId == null) {
+
+    if (token == null || title.isEmpty || content.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("로그인이 필요합니다.")));
+          const SnackBar(content: Text("필수 항목을 입력하세요.")));
       return false;
     }
-
-    if (title.isEmpty || content.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("제목과 내용을 입력하세요.")));
-      return false;
-    }
-
-    if (role != "TEACHER") {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("선생님만 공지사항을 등록할 수 있습니다.")));
-      return false;
-    }
-
-    bool? isConfirmed = await _showConfirmDialog();
-    if (isConfirmed != true) return false;
 
     try {
-      final notice = NoticeModel(centerId: centerId, title: title, content: content, date: date);
-      final List<MultipartFile> multipartImages = await _convertFilesToMultipart(_selectedImages);
-      final noticeJson = jsonEncode(notice.toJson());
+      if (_noticeId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("공지사항 ID가 없습니다.")));
+        return false;
+      }
 
-      await noticeService.createNotice("Bearer $token", noticeJson, multipartImages);
+      // ✅ NoticeModel 객체 생성 후 toJson() 사용
+      final updatedNotice = NoticeModel(
+        id: _noticeId,
+        centerId: widget.notice!.centerId,
+        title: title,
+        content: content,
+        date: date,
+        images: widget.notice!.images, // 기존 이미지 유지
+      ).toJson();
 
-      await _showSuccessDialog();
-      return true; // ✅ 성공 시 true 반환
+      await noticeService.updateNotice("Bearer $token", _noticeId!, updatedNotice);
+      await _showConfirmDialog();
+      return true;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("공지사항 생성 실패: $e")));
-      return false; // ✅ 실패 시 false 반환
+          SnackBar(content: Text("공지사항 수정 실패: $e")));
+      return false;
     }
   }
 
@@ -160,16 +166,19 @@ class _NoticeUpdateScreenState extends ConsumerState<NoticeUpdateScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: Colors.white,
           title: const Text(
-              "공지사항 등록", style: TextStyle(color: DARK_GREY_COLOR)),
+              "공지사항 수정", style: TextStyle(color: DARK_GREY_COLOR)),
           content: const Text(
-              "공지사항을 등록하시겠습니까?", style: TextStyle(color: DARK_GREY_COLOR)),
+              "공지사항을 수정하시겠습니까?", style: TextStyle(color: DARK_GREY_COLOR)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: const Text("취소", style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
+              onPressed: () {
+                // Navigator.pop(context, true);
+                _showSuccessDialog();
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: DARK_GREY_COLOR,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -182,7 +191,7 @@ class _NoticeUpdateScreenState extends ConsumerState<NoticeUpdateScreen> {
     );
   }
 
-  /// 공지사항 등록 성공 다이얼로그
+  /// ✅ 공지사항 수정 완료 다이얼로그
   Future<void> _showSuccessDialog() async {
     await showDialog<void>(
       context: context,
@@ -190,13 +199,14 @@ class _NoticeUpdateScreenState extends ConsumerState<NoticeUpdateScreen> {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: Colors.white,
-          title: const Text("공지사항 등록 완료", style: TextStyle(color: DARK_GREY_COLOR)),
-          content: const Text("공지사항이 성공적으로 등록되었습니다.", style: TextStyle(color: DARK_GREY_COLOR)),
+          title: const Text("공지사항 수정 완료", style: TextStyle(color: DARK_GREY_COLOR)),
+          content: const Text("공지사항이 성공적으로 수정되었습니다.", style: TextStyle(color: DARK_GREY_COLOR)),
           actions: [
             ElevatedButton(
               onPressed: () {
-                // Navigator.pop(context); // ✅ 다이얼로그 닫기
-                Navigator.pop(context, true); // ✅ 리스트 화면으로 이동 (true 반환)
+                ref.invalidate(provider.noticeListProvider);
+                Navigator.pop(context, true); // ✅ 다이얼로그 닫기 및 이전 화면으로 이동
+                Navigator.pop(context, true); // ✅ 다이얼로그 닫기 및 이전 화면으로 이동
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: DARK_GREY_COLOR,
@@ -213,125 +223,94 @@ class _NoticeUpdateScreenState extends ConsumerState<NoticeUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     final dio = ref.watch(dioProvider);
-    final _noticeService = NoticeService(dio);
+    final _noticeService = service.NoticeService(dio);
+
+    // 🔹 공지사항 ID가 없으면 API 요청을 보내지 않음
+    final noticeDetail = _noticeId == null
+        ? null
+        : ref.watch(provider.noticeDetailProvider(_noticeId!));
+
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: MAIN_YELLOW,
         centerTitle: true,
-        title: const Text("공지사항",
+        title: const Text("공지사항 수정",
             style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
         leading: IconButton(icon: const Icon(Icons.keyboard_backspace),
             onPressed: () => Navigator.pop(context)),
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(), // ✅ 화면 터치하면 키보드 숨기기
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        child: _noticeId == null
+            ? Center(child: Text("공지사항 ID가 없습니다."))
+            : noticeDetail!.when(
+          data: (notice) {
+            debugPrint("📌 공지사항 데이터: ${jsonEncode(notice.toJson())}"); // ✅ API 응답 JSON 출력
 
-              /// ✅ 키보드가 올라와도 UI가 자동 조정됨
-              Padding(
-                padding: EdgeInsets.only(bottom: MediaQuery
-                    .of(context)
-                    .viewInsets
-                    .bottom),
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _dateController,
-                      readOnly: true,
-                      decoration: CustomInputDecoration.basic(hintText: "날짜"),
-                      onTap: () => _openCustomDatePicker(context),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _titleController,
-                      decoration: CustomInputDecoration.basic(
-                          hintText: "제목을 입력하세요."),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _contentController,
-                      maxLines: 10,
-                      decoration: CustomInputDecoration.basic(
-                          hintText: "공지사항 내용을 써주세요."),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-              ),
-              // 이미지 추가 버튼 및 리스트
-              if (_selectedImages.isNotEmpty)
-                Wrap(
-                  spacing: 8.0,
-                  runSpacing: 8.0,
-                  children: _selectedImages
-                      .asMap()
-                      .entries
-                      .map((entry) {
-                    int index = entry.key;
-                    File image = entry.value;
-                    return Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.file(image, width: 100,
-                              height: 100,
-                              fit: BoxFit.cover),
-                        ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: () => _removeImage(index),
-                            child: const CircleAvatar(radius: 10,
-                                backgroundColor: MAIN_YELLOW,
-                                child: Icon(Icons.close, color: MAIN_DARK_GREY,
-                                    size: 14)),
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              const SizedBox(height: 16),
-              Row(
+            // _titleController.text = notice.title;
+            // _contentController.text = notice.content;
+            // _dateController.text = notice.date ?? "";
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: MultiImagePicker(
-                      onImagesPicked: (pickedFiles) {
-                        setState(() {
-                          _selectedImages.addAll(
-                              pickedFiles.map((file) => File(file.path)));
-                        });
-                      },
-                      builder: (context, pickImages) => CustomYellowButton(text: '사진추가', onPressed: pickImages),
+
+                  /// ✅ 키보드가 올라와도 UI가 자동 조정됨
+                  Padding(
+                    padding: EdgeInsets.only(bottom: MediaQuery
+                        .of(context)
+                        .viewInsets
+                        .bottom),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _dateController,
+                          readOnly: true,
+                          decoration: CustomInputDecoration.basic(hintText: "날짜"),
+                          onTap: () => _openCustomDatePicker(context),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _titleController,
+                          decoration: CustomInputDecoration.basic(
+                              hintText: "제목을 입력하세요."),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _contentController,
+                          maxLines: 10,
+                          decoration: CustomInputDecoration.basic(
+                              hintText: "공지사항 내용을 써주세요."),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                     ),
+                  ),
+
+                  const SizedBox(height: 16),
+                  CustomButton(
+                    text: "수정하기",
+                    onPressed: () async {
+                      bool isSuccess = await _updateNotice(_noticeService);
+                      if (isSuccess) {
+                        ref.invalidate(provider.noticeListProvider); //  기존 공지사항 목록 새로고침
+                        ref.invalidate(provider.noticeDetailProvider(_noticeId!)); //  공지사항 상세 정보도 새로고침
+                        Navigator.pop(context, true);
+                      }
+                    },
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              CustomButton(
-                text: "등록하기",
-                onPressed: () async {
-                  final dio = ref.read(dioProvider);
-                  final noticeService = NoticeService(dio); // ✅ NoticeService 인스턴스 생성
-
-                  bool isSuccess = await _createNotice(noticeService);
-
-                  if (isSuccess) {
-                    ref.invalidate(noticeListProvider); // ✅ 기존 데이터 삭제
-                    Navigator.pop(context, true);
-                  }
-                },
-              ),
-            ],
-          ),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()), // 🔹 로딩 중 표시
+          error: (err, stack) => Center(child: Text("공지사항을 불러올 수 없습니다.")), // 🔹 에러 표시
         ),
+
       ),
     );
   }
