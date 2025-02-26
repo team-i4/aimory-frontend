@@ -21,6 +21,16 @@ abstract class NoticeService {
       @Part(name: "images") List<MultipartFile>? images,
       );
 
+
+
+  /// ✅ 공지사항 수정 API 추가
+  @PUT("/notices/{notice_id}")
+  Future<void> updateNotice(
+      @Header("Authorization") String token,
+      @Path("notice_id") int noticeId,
+      @Body() Map<String, dynamic> updatedData,
+      );
+
   /// ✅ 공지사항 전체 조회 API
   @GET("/notices")
   Future<dynamic> getNotices(@Header("Authorization") String token);

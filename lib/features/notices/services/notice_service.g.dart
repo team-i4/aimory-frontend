@@ -62,6 +62,31 @@ class _NoticeService implements NoticeService {
   }
 
   @override
+  Future<void> updateNotice(
+    String token,
+    int noticeId,
+    Map<String, dynamic> updatedData,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(updatedData);
+    final _options = _setStreamType<void>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/notices/${noticeId}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
   Future<dynamic> getNotices(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
