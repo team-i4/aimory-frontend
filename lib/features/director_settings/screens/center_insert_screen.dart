@@ -30,6 +30,42 @@ class CenterInsertScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 16),
+                const Text('소속'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  // controller: emailController,
+                  decoration: CustomInputDecoration.basic(
+                    hintText: '어린이집명을 입력하세요.',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('연락처'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  // controller: nameController,
+                  decoration: CustomInputDecoration.basic(
+                    hintText: '연락처을 입력하세요.',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('주소'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  // controller: passwordController,
+                  obscureText: true,
+                  decoration: CustomInputDecoration.basic(
+                    hintText: '주소를 입력하세요.',
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+                CustomButton(
+                  text: '어린이집 등록하기',
+                  onPressed: () {
+                    //TODO: 등록하기 이벤트 리스너
+                  },
+                ),
               ],
             ),
           ),
