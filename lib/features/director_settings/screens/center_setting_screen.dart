@@ -240,9 +240,11 @@ class CenterSettingScreen extends ConsumerWidget {
                 const SizedBox(height: 8,),
                 CustomButton(
                   text: '어린이집 등록하기',
-                  onPressed: () {
-                    //TODO: 클릭 시 이벤트 추가
-
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const CenterInsertScreen()),
+                    );
                   },
                 ),
               ],
