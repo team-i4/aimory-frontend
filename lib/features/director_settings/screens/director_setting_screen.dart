@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
+import 'center_setting_screen.dart';
 
 class DirectorSettingScreen extends ConsumerWidget {
   const DirectorSettingScreen({super.key});
@@ -192,9 +193,11 @@ class DirectorSettingScreen extends ConsumerWidget {
                 const SizedBox(height: 24),
                 CustomButton(
                   text: '어린이집 설정',
-                  onPressed: () {
-                    //TODO: 클릭 시 이벤트 추가
-
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const CenterSettingScreen()),
+                    );
                   },
                 ),
                 const SizedBox(height: 8,),
