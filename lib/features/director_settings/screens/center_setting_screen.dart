@@ -7,10 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
-import 'center_setting_screen.dart';
+import 'center_insert_screen.dart';
 
-class DirectorSettingScreen extends ConsumerWidget {
-  const DirectorSettingScreen({super.key});
+class CenterSettingScreen extends ConsumerWidget {
+  const CenterSettingScreen({super.key});
 
   // Future<void> _showConfirmationDialog(
   //     BuildContext context, WidgetRef ref, SignupRequest request) async {
@@ -148,7 +148,7 @@ class DirectorSettingScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: MAIN_YELLOW,
         centerTitle: true,
-        title: const Text("관리자 설정", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
+        title: const Text("어린이집 정보 설정", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
         leading: IconButton(icon: const Icon(Icons.keyboard_backspace), onPressed: () => Navigator.pop(context)),
       ),
       body: SafeArea(
@@ -174,38 +174,77 @@ class DirectorSettingScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("소속", style: TextStyle(fontSize: 16),),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const CenterInsertScreen()),
+                                  );
+                                },
+                                label: const Text(
+                                  "수정하기",
+                                  style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: const BorderSide(color: MID_GREY_COLOR, width: 1),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8,),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  //TODO: 삭제 이벤트 리스너
+                                },
+                                label: const Text(
+                                  "삭제하기",
+                                  style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: const BorderSide(color: MID_GREY_COLOR, width: 1),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 16,),
+                        Text("소속", style: TextStyle(fontSize: 14),),
                         SizedBox(height: 8),
                         Text("햇님어린이집", style: TextStyle(fontSize: 18),),
                         SizedBox(height: 16),
-                        Text("연락처", style: TextStyle(fontSize: 16),),
+                        Text("연락처", style: TextStyle(fontSize: 14),),
                         SizedBox(height: 8),
                         Text("02-2222-2222", style: TextStyle(fontSize: 18),),
                         SizedBox(height: 16),
-                        Text("반", style: TextStyle(fontSize: 16),),
-                        SizedBox(height: 8),
-                        Text("장미반 구름반 햇님반 달님반", style: TextStyle(fontSize: 18),),
-                        SizedBox(height: 16),
+                        Text("주소", style: TextStyle(fontSize: 14),),
+                        Text("인천 서구 가정동", style: TextStyle(fontSize: 18),),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
+                const SizedBox(height: 8,),
                 CustomButton(
-                  text: '어린이집 설정',
+                  text: '어린이집 등록하기',
                   onPressed: () async {
                     final result = await Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const CenterSettingScreen()),
+                      MaterialPageRoute(builder: (context) => const CenterInsertScreen()),
                     );
-                  },
-                ),
-                const SizedBox(height: 8,),
-                CustomButton(
-                  text: '반 설정',
-                  onPressed: () {
-                    //TODO: 클릭 시 이벤트 추가
-
                   },
                 ),
               ],
