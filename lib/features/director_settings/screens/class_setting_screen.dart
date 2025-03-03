@@ -7,11 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
-import 'center_setting_screen.dart';
-import 'class_setting_screen.dart';
+import 'center_insert_screen.dart';
+import 'class_insert_screen.dart';
 
-class DirectorSettingScreen extends ConsumerWidget {
-  const DirectorSettingScreen({super.key});
+class ClassSettingScreen extends ConsumerWidget {
+  const ClassSettingScreen({super.key});
 
   // Future<void> _showConfirmationDialog(
   //     BuildContext context, WidgetRef ref, SignupRequest request) async {
@@ -142,7 +142,7 @@ class DirectorSettingScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: MAIN_YELLOW,
         centerTitle: true,
-        title: const Text("관리자 설정", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
+        title: const Text("반 정보 설정", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
         leading: IconButton(icon: const Icon(Icons.keyboard_backspace), onPressed: () => Navigator.pop(context)),
       ),
       body: SafeArea(
@@ -152,7 +152,7 @@ class DirectorSettingScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('어린이집'),
+                const Text('어린이집 반 정보'),
                 const SizedBox(height: 8),
                 Container(
                   margin: EdgeInsets.zero,
@@ -168,39 +168,128 @@ class DirectorSettingScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("소속", style: TextStyle(fontSize: 16),),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const CenterInsertScreen()),
+                                  );
+                                },
+                                label: const Text(
+                                  "아이등록",
+                                  style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: const BorderSide(color: MID_GREY_COLOR, width: 1),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 2,),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const CenterInsertScreen()),
+                                  );
+                                },
+                                label: const Text(
+                                  "교사등록",
+                                  style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: const BorderSide(color: MID_GREY_COLOR, width: 1),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => ClassInsertScreen()),
+                                  );
+                                },
+                                label: const Text(
+                                  "수정하기",
+                                  style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: const BorderSide(color: MID_GREY_COLOR, width: 1),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 2,),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  //TODO: 삭제 이벤트 리스너
+                                },
+                                label: const Text(
+                                  "삭제하기",
+                                  style: TextStyle(color: DARK_GREY_COLOR, fontSize: 14),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: const BorderSide(color: MID_GREY_COLOR, width: 1),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 16,),
+                        Text("구름반", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
+                        SizedBox(height: 16,),
+                        Text("담임 선생님", style: TextStyle(fontSize: 14),),
                         SizedBox(height: 8),
-                        Text("햇님어린이집", style: TextStyle(fontSize: 18),),
+                        Text("김지은", style: TextStyle(fontSize: 18),),
                         SizedBox(height: 16),
-                        Text("연락처", style: TextStyle(fontSize: 16),),
+                        Text("해당 반 원아", style: TextStyle(fontSize: 14),),
                         SizedBox(height: 8),
-                        Text("02-2222-2222", style: TextStyle(fontSize: 18),),
-                        SizedBox(height: 16),
-                        Text("반", style: TextStyle(fontSize: 16),),
-                        SizedBox(height: 8),
-                        Text("장미반 구름반 햇님반 달님반", style: TextStyle(fontSize: 18),),
+                        Text("박채은", style: TextStyle(fontSize: 18),),
+                        Text("이해리", style: TextStyle(fontSize: 18),),
+                        Text("서다원", style: TextStyle(fontSize: 18),),
+                        Text("박찬희", style: TextStyle(fontSize: 18),),
                         SizedBox(height: 16),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
-                CustomButton(
-                  text: '어린이집 설정',
-                  onPressed: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const CenterSettingScreen()),
-                    );
-                  },
-                ),
                 const SizedBox(height: 8,),
                 CustomButton(
-                  text: '반 설정',
+                  text: '반 등록하기',
                   onPressed: () async {
                     final result = await Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ClassSettingScreen()),
+                      MaterialPageRoute(builder: (context) => const ClassInsertScreen()),
                     );
                   },
                 ),
