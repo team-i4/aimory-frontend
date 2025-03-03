@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:aimory_app/core/const/colors.dart';
+import 'package:aimory_app/features/director_settings/screens/teacher_insert_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
 import 'center_insert_screen.dart';
+import 'children_insert_screen.dart';
 import 'class_insert_screen.dart';
 
 class ClassSettingScreen extends ConsumerWidget {
@@ -175,7 +177,7 @@ class ClassSettingScreen extends ConsumerWidget {
                                 onPressed: () async {
                                   final result = await Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => const CenterInsertScreen()),
+                                    MaterialPageRoute(builder: (context) => const ChildrenInsertScreen()),
                                   );
                                 },
                                 label: const Text(
@@ -198,7 +200,7 @@ class ClassSettingScreen extends ConsumerWidget {
                                 onPressed: () async {
                                   final result = await Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => const CenterInsertScreen()),
+                                    MaterialPageRoute(builder: (context) => const TeacherInsertScreen()),
                                   );
                                 },
                                 label: const Text(
