@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
 import 'center_insert_screen.dart';
+import 'class_insert_screen.dart';
 
 class ClassSettingScreen extends ConsumerWidget {
   const ClassSettingScreen({super.key});
@@ -223,7 +224,7 @@ class ClassSettingScreen extends ConsumerWidget {
                                 onPressed: () async {
                                   final result = await Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => const CenterInsertScreen()),
+                                    MaterialPageRoute(builder: (context) => ClassInsertScreen()),
                                   );
                                 },
                                 label: const Text(
@@ -288,7 +289,7 @@ class ClassSettingScreen extends ConsumerWidget {
                   onPressed: () async {
                     final result = await Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const CenterInsertScreen()),
+                      MaterialPageRoute(builder: (context) => const ClassInsertScreen()),
                     );
                   },
                 ),

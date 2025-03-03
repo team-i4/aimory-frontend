@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_input_decoration.dart';
 import 'center_setting_screen.dart';
+import 'class_setting_screen.dart';
 
 class DirectorSettingScreen extends ConsumerWidget {
   const DirectorSettingScreen({super.key});
@@ -136,13 +137,6 @@ class DirectorSettingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // TextEditingController 초기화
-    final nameController = TextEditingController();
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-    final confirmPasswordController = TextEditingController(); // 비밀번호 확인 필드
-    final roleController = ValueNotifier<String>('PARENT'); // 역할 선택 값 관리
-    final centerController = ValueNotifier<int>(1); // 초기값: 1
 
     return Scaffold(
       appBar: AppBar(
@@ -203,9 +197,11 @@ class DirectorSettingScreen extends ConsumerWidget {
                 const SizedBox(height: 8,),
                 CustomButton(
                   text: '반 설정',
-                  onPressed: () {
-                    //TODO: 클릭 시 이벤트 추가
-
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ClassSettingScreen()),
+                    );
                   },
                 ),
               ],
