@@ -29,64 +29,95 @@ class ParentNoticeListScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 20.0),
+
           Expanded(
-            child: noticeListAsync.when(
-              data: (notices) {
-                if (notices.isEmpty) {
-                  return const Center(child: Text("공지사항이 없습니다."));
-                }
-                return ListView.builder(
-                  itemCount: notices.length,
-                  itemBuilder: (context, index) {
-                    final notice = notices[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ParentNoticeDetailScreen(noticeId: notice.id!), // ✅ ID만 전달
-                          ),
-                        );
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-                        padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 7.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: BORDER_GREY_COLOR, width: 1),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: notice.images != null && notice.images!.isNotEmpty
-                                  ? Image.network(notice.images!.first, height: 80, width: 80, fit: BoxFit.cover)
-                                  : const Icon(Icons.image_not_supported, size: 80, color: Colors.grey),
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: '공지사항 내용을 검색해보세요.',
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                //TODO: 내용 검색 리스너
+                              },
+                              icon: const Icon(Icons.search),
+                              color: LIGHT_GREY_COLOR,
+                              iconSize: 30,
                             ),
-                            const SizedBox(width: 15.0),
-                            Expanded(
-                              child: Column(
+                          ),
+
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20.0,),
+                Expanded(
+                  child: noticeListAsync.when(
+                    data: (notices) {
+                      if (notices.isEmpty) {
+                        return const Center(child: Text("공지사항이 없습니다."));
+                      }
+                      return ListView.builder(
+                        itemCount: notices.length,
+                        itemBuilder: (context, index) {
+                          final notice = notices[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ParentNoticeDetailScreen(noticeId: notice.id!), // ✅ ID만 전달
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 7.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: BORDER_GREY_COLOR, width: 1),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(notice.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                                  Text(notice.date ?? "날짜 없음", style: const TextStyle(fontSize: 12, color: LIGHT_GREY_COLOR)),
-                                  Text(notice.content, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14)),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: notice.images != null && notice.images!.isNotEmpty
+                                        ? Image.network(notice.images!.first, height: 80, width: 80, fit: BoxFit.cover)
+                                        : const Icon(Icons.image_not_supported, size: 80, color: Colors.grey),
+                                  ),
+                                  const SizedBox(width: 15.0),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(notice.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                                        Text(notice.date ?? "날짜 없음", style: const TextStyle(fontSize: 12, color: LIGHT_GREY_COLOR)),
+                                        Text(notice.content, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14)),
+                                      ],
+                                    ),
+                                  ),
+                                  const Icon(Icons.more_vert, size: 16.0),
                                 ],
                               ),
                             ),
-                            const Icon(Icons.more_vert, size: 16.0),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text("공지사항 로드 실패: $error")),
+                          );
+                        },
+                      );
+                    },
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (error, _) => Center(child: Text("공지사항 로드 실패: $error")),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
