@@ -3,6 +3,7 @@ import 'package:aimory_app/features/notes/screens/teacher_note_detail_screen.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/const/colors.dart';
+import '../../../core/widgets/custom_input_decoration.dart';
 import '../../../core/widgets/swipe_to_delete.dart';
 import '../models/note_model.dart';
 import '../provider/note_provider.dart';
@@ -102,91 +103,122 @@ class TeacherNoteListScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 20.0,),
           Expanded(
-            child: noteListAsync.when(
-              data: (notes) => ListView.builder(
-                itemCount: notes.length,
-                itemBuilder: (context, index) {
-                  NoteModel note = notes[index];
-                  return SwipeToDelete(
-                    onDelete: () async {
-                      final confirm = await _showDeleteConfirmDialog(context);
-                      if (confirm != true) return;
-
-                      try {
-                        await ref.read(noteDeleteProvider(note.id!).future);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("알림장이 삭제되었습니다.")),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("삭제 실패: $e")),
-                        );
-                      }
-                    },
-                    child: GestureDetector(
-                      onTap: () async {
-                        bool? isUpdated = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TeacherNoteDetailScreen(noteId: note.id ?? 0),
-                          ),
-                        );
-                        if (isUpdated == true) {
-                          ref.invalidate(noteListProvider); // ✅ 수정 후 목록 갱신
-                        }
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-                        padding: EdgeInsets.symmetric(horizontal: 7.0, vertical: 7.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: BORDER_GREY_COLOR, width: 1),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // ✅ 이미지 표시
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: note.image != null
-                                  ? Image.network(note.image!, height: 80, width: 80, fit: BoxFit.cover)
-                                  : Icon(Icons.image_not_supported, size: 80, color: Colors.grey),
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: '알림장 내용을 검색해보세요.',
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                //TODO: 내용 검색 리스너
+                              },
+                              icon: const Icon(Icons.search),
+                              color: LIGHT_GREY_COLOR,
+                              iconSize: 30,
                             ),
-                            SizedBox(width: 15.0,),
-                            Expanded(
-                              child: Column(
+                          ),
+
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20.0,),
+                Expanded(
+                  child: noteListAsync.when(
+                    data: (notes) => ListView.builder(
+                      itemCount: notes.length,
+                      itemBuilder: (context, index) {
+                        NoteModel note = notes[index];
+                        return SwipeToDelete(
+                          onDelete: () async {
+                            final confirm = await _showDeleteConfirmDialog(context);
+                            if (confirm != true) return;
+
+                            try {
+                              await ref.read(noteDeleteProvider(note.id!).future);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("알림장이 삭제되었습니다.")),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("삭제 실패: $e")),
+                              );
+                            }
+                          },
+                          child: GestureDetector(
+                            onTap: () async {
+                              bool? isUpdated = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TeacherNoteDetailScreen(noteId: note.id ?? 0),
+                                ),
+                              );
+                              if (isUpdated == true) {
+                                ref.invalidate(noteListProvider); // ✅ 수정 후 목록 갱신
+                              }
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                              padding: EdgeInsets.symmetric(horizontal: 7.0, vertical: 7.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: BORDER_GREY_COLOR, width: 1),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    note.childName ?? "이름 없음",
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  // ✅ 이미지 표시
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: note.image != null
+                                        ? Image.network(note.image!, height: 80, width: 80, fit: BoxFit.cover)
+                                        : Icon(Icons.image_not_supported, size: 80, color: Colors.grey),
                                   ),
-                                  Text(
-                                    note.date,
-                                    style: TextStyle(fontSize: 12, color: LIGHT_GREY_COLOR),
-                                  ),
-                                  Text(
-                                    note.content,
-                                    style: TextStyle(fontSize: 14),
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
+                                  SizedBox(width: 15.0,),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          note.childName ?? "이름 없음",
+                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                        ),
+                                        Text(
+                                          note.date,
+                                          style: TextStyle(fontSize: 12, color: LIGHT_GREY_COLOR),
+                                        ),
+                                        Text(
+                                          note.content,
+                                          style: TextStyle(fontSize: 14),
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-              loading: () => Center(child: CircularProgressIndicator()), // ✅ 로딩 상태
-              error: (err, stack) => Center(child: Text("데이터를 불러오지 못했습니다.")), // ✅ 에러 처리
+                    loading: () => Center(child: CircularProgressIndicator()), // ✅ 로딩 상태
+                    error: (err, stack) => Center(child: Text("데이터를 불러오지 못했습니다.")), // ✅ 에러 처리
+                  ),
+                ),
+              ],
             ),
           ),
+
         ],
       ),
     );
