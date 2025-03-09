@@ -169,29 +169,33 @@ class SignUpScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('어린이집'),
-                const SizedBox(height: 8),
-                DropdownButtonFormField<int>(
-                  value: centerController.value, // centerController의 초기값
-                  items: [
-                    DropdownMenuItem(
-                      value: 1, // 값이 초기값과 일치해야 함
-                      child: Text('햇님어린이집'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    centerController.value = value ?? 1;
-                  },
-                  decoration: CustomInputDecoration.basic(
-                    hintText: '어린이집을 선택하세요.', // 힌트 문구
-                  ),
-                ),
-                const SizedBox(height: 16),
+                // const Text('어린이집'),
+                // const SizedBox(height: 8),
+                // DropdownButtonFormField<int>(
+                //   value: centerController.value, // centerController의 초기값
+                //   items: [
+                //     DropdownMenuItem(
+                //       value: 1, // 값이 초기값과 일치해야 함
+                //       child: Text('햇님어린이집'),
+                //     ),
+                //   ],
+                //   onChanged: (value) {
+                //     centerController.value = value ?? 1;
+                //   },
+                //   decoration: CustomInputDecoration.basic(
+                //     hintText: '어린이집을 선택하세요.', // 힌트 문구
+                //   ),
+                // ),
+                // const SizedBox(height: 16),
                 const Text('역할'),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   value: roleController.value, // 기본값 설정
                   items: [
+                    DropdownMenuItem(
+                      value: 'DIRECTOR',
+                      child: Text('원장'),
+                    ),
                     DropdownMenuItem(
                       value: 'TEACHER',
                       child: Text('교사'),
